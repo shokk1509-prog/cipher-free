@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cifra.dispersio — free</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080a14;--surface:#0c0e1c;--border:#1a2248;
+  --accent:#4169e1;--text:#c8d0f0;--dim:#7080b0;--muted:#2a3460;
+  --net:#4a9eff;--cry:#a855f7;--web:#f97316;
+  --mono:'JetBrains Mono',monospace;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var(--mono);}
+
+/* ── TOPBAR ── */
+.topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 20px;height:40px;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+}
+.logo{color:var(--accent);font-weight:700;font-size:13px;letter-spacing:1px;}
+.logo a{color:inherit;text-decoration:none;}
+.nav-link{font-size:9px;color:var(--dim);text-decoration:none;padding:2px 7px;border:1px solid transparent;border-radius:2px;transition:all .15s;}
+.nav-link:hover{color:var(--text);border-color:var(--border);}
+.nav-link.active{color:var(--accent);border-color:var(--accent);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.badge-free{font-size:8px;font-weight:700;letter-spacing:.1em;padding:2px 6px;border-radius:2px;border:1px solid var(--dim);color:var(--dim);text-transform:uppercase;}
+.badge-full{font-size:8px;font-weight:700;letter-spacing:.1em;padding:2px 6px;border-radius:2px;border:1px solid var(--accent);color:var(--accent);background:rgba(65,105,225,.08);text-transform:uppercase;text-decoration:none;}
+
+/* ── LANGBAR ── */
+.langbar{
+  display:flex;align-items:center;gap:3px;padding:4px 20px;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.lang-btn{
+  padding:1px 5px;border-radius:2px;border:1px solid var(--border);
+  background:transparent;color:var(--dim);font-family:var(--mono);
+  font-size:8px;cursor:pointer;transition:all .15s;
+}
+.lang-btn:hover{color:var(--text);border-color:var(--muted);}
+.lang-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(65,105,225,.08);}
+
+/* ── LAYOUT ── */
+.main{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 72px);}
+
+/* ── LEFT: STATIC VISUAL ── */
+.viz-pane{
+  position:relative;border-right:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg);overflow:hidden;
+}
+#staticCanvas{display:block;}
+.viz-label{
+  position:absolute;bottom:16px;left:16px;
+  font-size:8px;color:var(--muted);letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.viz-label span{color:var(--accent);}
+
+/* ── RIGHT: CONTENT ── */
+.content-pane{overflow-y:auto;padding:40px 40px 60px;}
+
+.section-tag{
+  font-size:8px;font-weight:700;color:var(--accent);
+  letter-spacing:.2em;text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;margin-bottom:20px;
+}
+.section-tag::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.title{
+  font-size:22px;font-weight:700;letter-spacing:-.5px;
+  color:var(--text);line-height:1.2;margin-bottom:8px;
+}
+.subtitle{
+  font-size:11px;color:var(--dim);font-weight:300;
+  line-height:1.8;margin-bottom:32px;
+}
+
+/* ── READING ORDER ── */
+.reading-order{margin-bottom:40px;}
+.reading-label{
+  font-size:8px;font-weight:700;color:var(--dim);
+  letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px;
+}
+.step{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:10px 14px;border:1px solid var(--border);
+  border-radius:3px;margin-bottom:6px;
+  transition:all .2s;cursor:default;
+  text-decoration:none;
+}
+.step:hover{border-color:var(--accent);background:rgba(65,105,225,.04);}
+.step.current{border-color:var(--accent);background:rgba(65,105,225,.07);}
+.step-num{
+  font-size:10px;font-weight:700;color:var(--muted);
+  min-width:14px;margin-top:1px;
+}
+.step.current .step-num{color:var(--accent);}
+.step-body{}
+.step-name{font-size:11px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.step.current .step-name{color:var(--accent);}
+.step-desc{font-size:9px;color:var(--dim);line-height:1.6;font-weight:300;}
+
+/* ── DISPERSIO SECTION ── */
+.dispersio-section{margin-top:32px;}
+.dispersio-title{
+  font-size:11px;font-weight:700;color:var(--text);
+  margin-bottom:10px;letter-spacing:.05em;
+}
+.dispersio-title span{color:var(--accent);}
+.body-text{font-size:11px;line-height:2;font-weight:300;color:var(--dim);margin-bottom:16px;}
+.body-text strong{color:var(--text);font-weight:700;}
+
+.field-row{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.field-tag{
+  font-size:8px;padding:2px 8px;border-radius:2px;
+  font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+}
+.field-net{border:1px solid var(--net);color:var(--net);}
+.field-cry{border:1px solid var(--cry);color:var(--cry);}
+.field-web{border:1px solid var(--web);color:var(--web);}
+
+.paper-list{margin-bottom:24px;}
+.paper-item{
+  display:flex;align-items:baseline;gap:10px;
+  padding:6px 0;border-bottom:1px solid var(--border);
+  font-size:9px;
+}
+.paper-item:last-child{border-bottom:none;}
+.paper-year{color:var(--muted);min-width:32px;}
+.paper-short{font-weight:700;min-width:90px;}
+.paper-short.net{color:var(--net);}
+.paper-short.cry{color:var(--cry);}
+.paper-short.web{color:var(--web);}
+.paper-title{color:var(--dim);font-weight:300;}
+
+/* scrollbar */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--muted);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo"><a href="cipher-main-free.html">cifra.dispersio</a></div>
+  <div style="display:flex;gap:4px">
+    <a href="cipher-about-free.html"    class="nav-link">about</a>
+    <a href="cipher-concept-free.html"  class="nav-link">concept</a>
+    <a href="cipher-closing-free.html"  class="nav-link">closing</a>
+    <a href="cipher-main-free.html"     class="nav-link active">dispersio</a>
+  </div>
+  <div class="topbar-right">
+    <span class="badge-free">free</span>
+    <a href="cipher-main-free.html" class="badge-full">● full</a>
+  </div>
+</div>
+
+<div class="langbar" id="langbar"></div>
+
+<div class="main">
+
+  <!-- LEFT: STATIC VISUAL -->
+  <div class="viz-pane" id="vizPane">
+    <canvas id="staticCanvas"></canvas>
+    <div class="viz-label">
+      <span>IDA dispersal</span> · static · full version animates
+    </div>
+  </div>
+
+  <!-- RIGHT: CONTENT -->
+  <div class="content-pane">
+
+    <div class="section-tag">dispersio · suissa de lectura</div>
+
+    <div class="title">cifra.dispersio</div>
+    <div class="subtitle">
+      Distributed systems education.<br>
+      8 papers. 1964–2014. One line of descent.
+    </div>
+
+    <!-- WHAT THIS GRAPH SHOWS -->
+    <div class="section-tag">ce que montre aquest grafe</div>
+    <div class="body-text">
+      Lo centre es un trauc negre. Les punts que s'expandisson cap a defòra son partículas d'informacion — cadun un fragment del messatge original.
+    </div>
+    <div class="body-text">
+      Aquò es lo raïonament de Hawking coma algoritme : l'informacion dispartís pas. Se dispersa. Tot assemslable sufisent de fragments reconstruís l'ensemble.
+    </div>
+    <div class="body-text">
+      Les nòdes ròses e les nòdes blaus representan dos tipes de fragments. Ni l'un ni l'autre sol basta. Ensemble, si.
+    </div>
+
+    <!-- FOR USE IN CLASS -->
+    <div class="section-tag">per utilizan en classa</div>
+    <div class="body-text">
+      <strong>Question :</strong> Se supramisètz un cluster, lo messatge pòt encara estre recuperat ?
+    </div>
+    <div class="body-text">
+      <strong>Idèa clau :</strong> Lo seuil k — lo nombre minimum de fragments necessaris — es un causit de concepcion. Seguretat e redundança son la meteissa variable.
+    </div>
+    <div class="body-text">
+      <strong>Ligam :</strong> Shamir (1979) l'a demostrat algebricament. Rabin (1989) l'a descrit fisicament. L'estrutura es la meteissa.
+    </div>
+
+    <!-- READING ORDER -->
+    <div class="section-tag">legir dins aqueste òrdre</div>
+    <div class="reading-order">
+      <a href="cipher-about-free.html" class="step">
+        <span class="step-num">1</span>
+        <div class="step-body">
+          <div class="step-name">about</div>
+          <div class="step-desc">D'ont tot a comencet. Hawking, la distança, e perque aquesta plataforma s'obra en anglés.</div>
+        </div>
+      </a>
+      <a href="cipher-concept-free.html" class="step">
+        <span class="step-num">2</span>
+        <div class="step-body">
+          <div class="step-name">concept</div>
+          <div class="step-desc">L'algoritme, la fisica, l'etimologia. Perque 22 lengas. Las referéncias.</div>
+        </div>
+      </a>
+      <a href="cipher-closing-free.html" class="step">
+        <span class="step-num">3</span>
+        <div class="step-body">
+          <div class="step-name">closing</div>
+          <div class="step-desc">Perque aquò existís. La decision. Lo futur.</div>
+        </div>
+      </a>
+      <a href="cipher-main-free.html" class="step current">
+        <span class="step-num">4</span>
+        <div class="step-body">
+          <div class="step-name">aquí · cifra/dispersio,https://shokk1509-prog.github.io/cifra-free/</div>
+          <div class="step-desc"></div>
+        </div>
+      </a>
+    </div>
+
+    <!-- PAPERS -->
+    <div class="dispersio-section">
+      <div class="dispersio-title">8 papers · <span>1964 → 2014</span></div>
+      <div class="field-row">
+        <span class="field-tag field-net">network / systems</span>
+        <span class="field-tag field-cry">cryptography</span>
+        <span class="field-tag field-web">web3 / blockchain</span>
+      </div>
+      <div class="paper-list">
+        <div class="paper-item"><span class="paper-year">1964</span><span class="paper-short net">Baran</span><span class="paper-title">On Distributed Communications</span></div>
+        <div class="paper-item"><span class="paper-year">1979</span><span class="paper-short cry">Shamir</span><span class="paper-title">How to Share a Secret</span></div>
+        <div class="paper-item"><span class="paper-year">1980</span><span class="paper-short cry">Merkle</span><span class="paper-title">Protocols for Public Key Cryptosystems</span></div>
+        <div class="paper-item"><span class="paper-year">1982</span><span class="paper-short net">Lamport</span><span class="paper-title">The Byzantine Generals Problem</span></div>
+        <div class="paper-item"><span class="paper-year">1989</span><span class="paper-short cry">Rabin</span><span class="paper-title">Efficient Dispersal of Information</span></div>
+        <div class="paper-item"><span class="paper-year">2002</span><span class="paper-short cry">Back</span><span class="paper-title">Hashcash — A Denial of Service Counter-Measure</span></div>
+        <div class="paper-item"><span class="paper-year">2008</span><span class="paper-short web">Nakamoto</span><span class="paper-title">Bitcoin: A Peer-to-Peer Electronic Cash System</span></div>
+        <div class="paper-item"><span class="paper-year">2014</span><span class="paper-short web">Buterin</span><span class="paper-title">Ethereum: A Next-Generation Smart Contract Platform</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── LANG ─────────────────────────────────────────────────────────────────────
+const LANGS=[
+  {id:'en-GB',l:'🇬🇧 EN'},{id:'fr',l:'🇫🇷 FR'},{id:'fr-BE',l:'🇧🇪 FR-BE'},
+  {id:'fr-CH',l:'🇨🇭 FR-CH'},{id:'fr-CA',l:'🇨🇦 QC'},{id:'de',l:'🇩🇪 DE'},
+  {id:'de-AT',l:'🇦🇹 DE-AT'},{id:'de-CH',l:'🇨🇭 DE-CH'},{id:'nl',l:'🇳🇱 NL'},
+  {id:'lb',l:'🇱🇺 LB'},{id:'it',l:'🇮🇹 IT'},{id:'it-CH',l:'🇨🇭 IT-CH'},
+  {id:'pt',l:'🇵🇹 PT'},{id:'es',l:'🇪🇸 ES'},{id:'is',l:'🇮🇸 IS'},
+  {id:'ca',l:'🏴 CA'},{id:'eu',l:'🏴 EU'},{id:'gl',l:'🏴 GL'},
+  {id:'oc',l:'🏴 OC'},{id:'br',l:'🏴 BR'},{id:'co',l:'🏴 CO'},{id:'rm',l:'🇨🇭 RM'},
+];
+let LANG=(()=>{try{return localStorage.getItem('cipher_lang')||'en-GB';}catch(e){return'en-GB';}})();
+function buildLangBar(){
+  const bar=document.getElementById('langbar');bar.innerHTML='';
+  LANGS.forEach(l=>{
+    const b=document.createElement('button');
+    b.className='lang-btn'+(l.id===LANG?' active':'');
+    b.textContent=l.l+' '+l.id.toUpperCase();
+    b.onclick=()=>{try{localStorage.setItem('cipher_lang',l.id);}catch(e){}LANG=l.id;buildLangBar();};
+    bar.appendChild(b);
+  });
+}
+buildLangBar();
+
+// ── STATIC CANVAS: IDA + NODE GRAPH OVERLAY ───────────────────────────────────
+const canvas = document.getElementById('staticCanvas');
+const ctx    = canvas.getContext('2d');
+const pane   = document.getElementById('vizPane');
+
+function resize(){
+  canvas.width  = pane.clientWidth;
+  canvas.height = pane.clientHeight;
+  draw();
+}
+window.addEventListener('resize', resize);
+
+// Paper nodes positions (normalised -1 to 1 → mapped to canvas)
+const NODES = [
+  {id:'baran',    field:'net', x:-.55, y: .15, label:'Baran 1964'},
+  {id:'lamport',  field:'net', x:-.22, y:-.28, label:'Lamport 1982'},
+  {id:'shamir',   field:'cry', x:-.08, y: .38, label:'Shamir 1979'},
+  {id:'merkle',   field:'cry', x: .18, y: .38, label:'Merkle 1980'},
+  {id:'rabin',    field:'cry', x: .10, y:-.02, label:'Rabin 1989'},
+  {id:'back',     field:'cry', x: .36, y:-.28, label:'Back 2002'},
+  {id:'nakamoto', field:'web', x: .44, y: .08, label:'Nakamoto 2008'},
+  {id:'buterin',  field:'web', x: .72, y:-.08, label:'Buterin 2014'},
+];
+
+const EDGES = [
+  ['baran','lamport'],['shamir','rabin'],['shamir','nakamoto'],
+  ['merkle','nakamoto'],['rabin','nakamoto'],['back','nakamoto'],
+  ['lamport','nakamoto'],['nakamoto','buterin'],['rabin','buterin'],
+];
+
+const FC = { net:'#4a9eff', cry:'#a855f7', web:'#f97316' };
+
+// IDA fragments: dispersed from centre-left area
+const FRAGMENTS = [];
+const N=11, K=6;
+for(let i=0;i<N;i++){
+  const angle=(i/N)*Math.PI*2;
+  const r=0.22+Math.random()*0.06;
+  FRAGMENTS.push({
+    angle, r,
+    x: -0.28+Math.cos(angle)*r,
+    y:  0.02+Math.sin(angle)*r,
+    isK: i<K,
+  });
+}
+
+function toScreen(nx, ny){
+  const W=canvas.width, H=canvas.height;
+  const cx=W*0.5, cy=H*0.5;
+  const scale=Math.min(W,H)*0.42;
+  return [cx+nx*scale, cy+ny*scale];
+}
+
+function draw(){
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // background grid
+  ctx.strokeStyle='rgba(26,34,72,0.35)'; ctx.lineWidth=0.5;
+  for(let x=0;x<W;x+=36){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=36){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // ── IDA fragments ──
+  const [icx,icy]=toScreen(-0.28,0.02);
+  const scale=Math.min(W,H)*0.42;
+
+  // orbit ring (dashed)
+  ctx.save();
+  ctx.strokeStyle='rgba(65,105,225,0.12)'; ctx.lineWidth=1; ctx.setLineDash([4,8]);
+  ctx.beginPath(); ctx.arc(icx,icy,0.22*scale,0,Math.PI*2); ctx.stroke();
+  ctx.setLineDash([]); ctx.restore();
+
+  // centre M (black hole)
+  const mgr=ctx.createRadialGradient(icx,icy,0,icx,icy,18);
+  mgr.addColorStop(0,'rgba(65,105,225,0.7)'); mgr.addColorStop(1,'rgba(65,105,225,0)');
+  ctx.fillStyle=mgr; ctx.beginPath(); ctx.arc(icx,icy,18,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='rgba(65,105,225,0.5)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.arc(icx,icy,18,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='rgba(200,208,240,0.9)'; ctx.font='bold 10px var(--mono)';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('M',icx,icy);
+
+  // k-threshold lines
+  FRAGMENTS.forEach((f,i)=>{
+    if(!f.isK)return;
+    const fx=icx+Math.cos(f.angle)*f.r*scale;
+    const fy=icy+Math.sin(f.angle)*f.r*scale;
+    ctx.save(); ctx.globalAlpha=0.2;
+    ctx.strokeStyle='#4a9eff'; ctx.lineWidth=0.8; ctx.setLineDash([2,5]);
+    ctx.beginPath(); ctx.moveTo(icx,icy); ctx.lineTo(fx,fy); ctx.stroke();
+    ctx.setLineDash([]); ctx.restore();
+  });
+
+  // fragment dots
+  FRAGMENTS.forEach((f,i)=>{
+    const fx=icx+Math.cos(f.angle)*f.r*scale;
+    const fy=icy+Math.sin(f.angle)*f.r*scale;
+    const col=f.isK?'#4a9eff':'#a855f7';
+    const gr=ctx.createRadialGradient(fx,fy,0,fx,fy,7);
+    gr.addColorStop(0,col+'99'); gr.addColorStop(1,col+'00');
+    ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(fx,fy,7,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=col; ctx.beginPath(); ctx.arc(fx,fy,3,0,Math.PI*2); ctx.fill();
+    ctx.font='7px var(--mono)'; ctx.fillStyle=col; ctx.textAlign='center';
+    ctx.fillText('f'+i,fx,fy+13);
+  });
+
+  // ── NODE GRAPH (right side, semi-transparent overlay) ──
+
+  // edges first
+  EDGES.forEach(([a,b])=>{
+    const na=NODES.find(n=>n.id===a), nb=NODES.find(n=>n.id===b);
+    if(!na||!nb)return;
+    const [ax,ay]=toScreen(na.x,na.y);
+    const [bx,by]=toScreen(nb.x,nb.y);
+    ctx.save(); ctx.globalAlpha=0.25;
+    ctx.strokeStyle='#2a3460'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.stroke();
+    // arrowhead
+    const dx=bx-ax,dy=by-ay,len=Math.sqrt(dx*dx+dy*dy);
+    const ux=dx/len,uy=dy/len;
+    const ex=bx-ux*10,ey=by-uy*10;
+    ctx.fillStyle='#2a3460';
+    ctx.beginPath();
+    ctx.moveTo(ex+uy*4,ey-ux*4);
+    ctx.lineTo(bx-ux*5,by-uy*5);
+    ctx.lineTo(ex-uy*4,ey+ux*4);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  });
+
+  // nodes
+  NODES.forEach(n=>{
+    const [nx,ny]=toScreen(n.x,n.y);
+    const col=FC[n.field];
+    // glow
+    const gr=ctx.createRadialGradient(nx,ny,0,nx,ny,14);
+    gr.addColorStop(0,col+'44'); gr.addColorStop(1,col+'00');
+    ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(nx,ny,14,0,Math.PI*2); ctx.fill();
+    // torus ring
+    ctx.strokeStyle=col+'66'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(nx,ny,9,0,Math.PI*2); ctx.stroke();
+    // core
+    ctx.fillStyle=col+'cc'; ctx.beginPath(); ctx.arc(nx,ny,5,0,Math.PI*2); ctx.fill();
+    // label
+    ctx.font='7px var(--mono)'; ctx.fillStyle=col+'cc';
+    ctx.textAlign='center';
+    ctx.fillText(n.label,nx,ny+20);
+  });
+}
+
+resize();
+</script>
+</body>
+</html>

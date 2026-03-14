@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cipher.learn — concept</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #080a14;
+  --surface: #0c0e1c;
+  --panel:   #0e1020;
+  --border:  #1a2248;
+  --accent:  #4169e1;
+  --text:    #c8d0f0;
+  --dim:     #7080b0;
+  --muted:   #2a3460;
+  --mono:    'JetBrains Mono', monospace;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--mono); font-size: 13px; line-height: 1.6;
+  min-height: 100vh; display: flex; flex-direction: column;
+}
+.topbar {
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 20px; height: 44px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  flex-shrink: 0; position: sticky; top: 0; z-index: 100;
+}
+.logo { color: var(--accent); font-weight: 700; font-size: 15px; letter-spacing: 1px; }
+.logo a { color: inherit; text-decoration: none; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.nav-link {
+  font-size: 11px; color: var(--dim); text-decoration: none;
+  padding: 4px 10px; border: 1px solid transparent; border-radius: 3px;
+  transition: all .15s;
+}
+.nav-link:hover { color: var(--text); border-color: var(--border); }
+.nav-link.active { color: var(--accent); border-color: var(--accent); }
+.langbar {
+  display: flex; align-items: center; gap: 4px; padding: 8px 20px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  flex-shrink: 0; flex-wrap: wrap; position: sticky; top: 44px; z-index: 99;
+}
+.lang-btn {
+  padding: 3px 8px; border-radius: 3px;
+  border: 1px solid var(--border); background: transparent; color: var(--dim);
+  font-family: var(--mono); font-size: 10px; cursor: pointer;
+  transition: all .15s; user-select: none;
+}
+.lang-btn:hover { color: var(--text); border-color: var(--muted); }
+.lang-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(65,105,225,.08); }
+.content { max-width: 720px; margin: 0 auto; padding: 60px 40px 80px; flex: 1; }
+.section { margin-bottom: 64px; }
+.section-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
+  color: var(--accent); text-transform: uppercase;
+  margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.body-text { font-size: 13px; line-height: 2; color: var(--text); font-weight: 300; }
+.body-text p { margin-bottom: 20px; }
+.body-text p:last-child { margin-bottom: 0; }
+.em { color: #a8b8f8; font-style: italic; }
+.strong { color: #e0e8ff; font-weight: 700; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+.pull {
+  border-left: 2px solid var(--accent);
+  padding: 12px 20px; margin: 28px 0;
+  color: var(--dim); font-size: 12px; line-height: 1.9; font-style: italic;
+}
+.diagram {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 4px; padding: 24px 20px; margin: 28px 0;
+  font-size: 11px; line-height: 2; color: var(--dim); font-family: var(--mono);
+}
+.diagram-title {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.15em;
+  color: var(--accent); text-transform: uppercase; margin-bottom: 16px;
+}
+.ref-list { margin-top: 32px; border-top: 1px solid var(--border); padding-top: 24px; }
+.ref-item {
+  display: grid; grid-template-columns: 28px 1fr; gap: 0 12px;
+  margin-bottom: 16px; font-size: 11px; line-height: 1.8; color: var(--dim);
+}
+.ref-item:last-child { margin-bottom: 0; }
+.ref-num { color: var(--accent); font-weight: 700; font-size: 10px; padding-top: 2px; }
+.ref-text em { font-style: italic; color: var(--text); }
+.ref-text .ref-author { color: var(--text); }
+.footer {
+  border-top: 1px solid var(--border); padding: 16px 20px;
+  font-size: 10px; color: var(--muted); display: flex; gap: 20px; background: var(--surface);
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo"><a href="cipher-main-free.html">cipher.learn</a></div>
+  <div style="display:flex;gap:4px">
+    <a href="cipher-about-free.html" class="nav-link">about</a>
+    <a href="cipher-languages-free.html" class="nav-link">languages</a>
+    <a href="cipher-concept-free.html" class="nav-link active">concept</a>
+    <a href="cipher-closing-free.html" class="nav-link">closing</a>
+    <a href="cipher-main-free.html" class="nav-link">main</a>
+  </div>
+  <div class="topbar-right">
+    <a href="cipher-concept-free.html" style="text-decoration:none;font-size:9px;font-weight:700;letter-spacing:.1em;padding:2px 7px;border-radius:2px;border:1px solid var(--accent);color:var(--accent);background:rgba(65,105,225,.1);text-transform:uppercase">free</a>
+  </div>
+</div>
+
+<div class="langbar" id="langbar"></div>
+<div class="content" id="content"></div>
+<div class="footer"><span>cipher.learn</span><span id="footerLang"></span></div>
+
+<script>
+const CIFRA_LANGS = [
+  { id: 'en-GB', label: '🇬🇧 EN',    name: 'English'          },
+  { id: 'fr',    label: '🇫🇷 FR',    name: 'Français'         },
+  { id: 'fr-BE', label: '🇧🇪 FR-BE', name: 'Français (BE)'    },
+  { id: 'fr-CH', label: '🇨🇭 FR-CH', name: 'Français (CH)'    },
+  { id: 'fr-CA', label: '🇨🇦 QC',    name: 'Français (CA)'    },
+  { id: 'de',    label: '🇩🇪 DE',    name: 'Deutsch'          },
+  { id: 'de-AT', label: '🇦🇹 DE-AT', name: 'Deutsch (AT)'     },
+  { id: 'de-CH', label: '🇨🇭 DE-CH', name: 'Deutsch (CH)'     },
+  { id: 'nl',    label: '🇳🇱 NL',    name: 'Nederlands'       },
+  { id: 'lb',    label: '🇱🇺 LB',    name: 'Lëtzebuergesch'   },
+  { id: 'it',    label: '🇮🇹 IT',    name: 'Italiano'         },
+  { id: 'it-CH', label: '🇨🇭 IT-CH', name: 'Italiano (CH)'    },
+  { id: 'pt',    label: '🇵🇹 PT',    name: 'Português'        },
+  { id: 'es',    label: '🇪🇸 ES',    name: 'Español'          },
+  { id: 'is',    label: '🇮🇸 IS',    name: 'Íslenska'         },
+  { id: 'ca',    label: '🏴 CA',     name: 'Català'           },
+  { id: 'eu',    label: '🏴 EU',     name: 'Euskara'          },
+  { id: 'gl',    label: '🏴 GL',     name: 'Galego'           },
+  { id: 'oc',    label: '🏴 OC',     name: 'Occitan'          },
+  { id: 'br',    label: '🏴 BR',     name: 'Brezhoneg'        },
+  { id: 'co',    label: '🏴 CO',     name: 'Corsu'            },
+  { id: 'rm',    label: '🇨🇭 RM',    name: 'Rumantsch'        },
+];
+
+function cifraGetLang() { try { return localStorage.getItem('cipher_lang') || 'en-GB'; } catch(e) { return 'en-GB'; } }
+function cifraSetLang(id) { try { localStorage.setItem('cipher_lang', id); } catch(e) {} }
+
+const REFS = `<div class="ref-list">
+  <div class="ref-item"><div class="ref-num">[1]</div><div class="ref-text"><span class="ref-author">Baran, P.</span> (1964). On Distributed Communications. <em>RAND Corporation Memoranda</em>, RM-3420-PR.</div></div>
+  <div class="ref-item"><div class="ref-num">[2]</div><div class="ref-text"><span class="ref-author">Lamport, L., Shostak, R., &amp; Pease, M.</span> (1982). The Byzantine Generals Problem. <em>ACM Transactions on Programming Languages and Systems</em>, 4(3), 382–401.</div></div>
+  <div class="ref-item"><div class="ref-num">[3]</div><div class="ref-text"><span class="ref-author">Shamir, A.</span> (1979). How to share a secret. <em>Communications of the ACM</em>, 22(11), 612–613.</div></div>
+  <div class="ref-item"><div class="ref-num">[4]</div><div class="ref-text"><span class="ref-author">Merkle, R. C.</span> (1980). Protocols for Public Key Cryptosystems. <em>IEEE Symposium on Security and Privacy</em>, 122–134.</div></div>
+  <div class="ref-item"><div class="ref-num">[5]</div><div class="ref-text"><span class="ref-author">Rabin, M. O.</span> (1989). Efficient dispersal of information for security, load balancing, and fault tolerance. <em>Journal of the ACM</em>, 36(2), 335–348.</div></div>
+  <div class="ref-item"><div class="ref-num">[6]</div><div class="ref-text"><span class="ref-author">Back, A.</span> (2002). Hashcash — A Denial of Service Counter-Measure. <em>hashcash.org</em>.</div></div>
+  <div class="ref-item"><div class="ref-num">[7]</div><div class="ref-text"><span class="ref-author">Nakamoto, S.</span> (2008). Bitcoin: A Peer-to-Peer Electronic Cash System. <em>bitcoin.org</em>.</div></div>
+  <div class="ref-item"><div class="ref-num">[8]</div><div class="ref-text"><span class="ref-author">Buterin, V.</span> (2014). Ethereum: A Next-Generation Smart Contract and Decentralised Application Platform. <em>ethereum.org</em>.</div></div>
+</div>`;
+
+const DIAGRAM_IDA = `<div class="diagram">
+  <div class="diagram-title">Fig. 1 — Information Dispersal Algorithm (Rabin, 1989)</div>
+  <div style="text-align:center;line-height:2.2;color:var(--dim)">
+    <div>M</div>
+    <div style="color:var(--accent)">↓ encode</div>
+    <div>[ f₁ ]&nbsp;&nbsp;[ f₂ ]&nbsp;&nbsp;[ f₃ ]&nbsp;&nbsp;···&nbsp;&nbsp;[ fₙ ]&nbsp;&nbsp;<span style="color:var(--dim);font-size:10px">n fragments</span></div>
+    <div style="color:var(--accent)">↓ any k of n</div>
+    <div>reconstruct ── M</div>
+  </div>
+</div>`;
+
+const DIAGRAM_ARCH = `<div class="diagram">
+  <div class="diagram-title">Fig. 2 — Centralised vs. Distributed Architecture</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px">
+    <div>
+      <div style="color:var(--text);font-size:10px;margin-bottom:8px">centralised</div>
+      <div style="color:var(--dim);font-size:11px;line-height:2">┌──────────┐<br>│&nbsp;&nbsp;SERVER&nbsp;&nbsp;│<br>│&nbsp;(single)&nbsp;│<br>└──────────┘<br><span style="color:#e05050;font-size:10px">↑ single point of failure</span></div>
+    </div>
+    <div>
+      <div style="color:var(--text);font-size:10px;margin-bottom:8px">distributed</div>
+      <div style="color:var(--dim);font-size:11px;line-height:2">f₁ ── node A<br>f₂ ── node B<br>dispersio → f₃ ── node C<br>f₄ ── node D<br>f₅ ── node E<br><span style="color:#50c050;font-size:10px">↑ no single point of failure</span></div>
+    </div>
+  </div>
+</div>`;
+
+const C = {};
+
+C['en-GB'] = {
+  l1: 'Why Distribution — The Institutional Failure',
+  s1: `<p>The choice of cryptographic dispersal as the technical foundation of cipher.learn is not arbitrary. It is a direct response to a structural problem: centralised systems fail. They fail technically, and they fail socially.</p>
+<p>Paul Baran's 1964 RAND report described a communications network designed to survive nuclear attack. His insight was not about redundancy as a feature — it was about redundancy as the only honest response to the certainty of failure. A network with a single centre does not merely risk collapse; it guarantees it. The question is only when.</p>
+<div class="pull">Distributed architecture was not invented to be fashionable. It was invented because centralised systems are structurally brittle — and that brittleness applies equally to communications infrastructure, financial systems, and educational institutions.</div>
+<p>The same logic that motivated Baran's network design applies to knowledge. When the institution that holds knowledge fails — through gatekeeping, through resource constraints, through cultural indifference — the knowledge does not simply become unavailable. It becomes invisible to anyone the institution has not already reached.</p>
+<p>cipher.learn begins from this observation. The platform exists not because institutions are malicious, but because their structure creates blind spots that no individual institution can correct from within.</p>`,
+  l2: 'The Algorithmic Foundation',
+  s2: `<p>The theoretical core draws from a lineage of work on distributed systems and threshold schemes — research motivated not by elegance alone, but by the practical problem of what happens when nodes fail, when participants are adversarial, and when trust cannot be assumed.</p>
+<p>Lamport, Shostak, and Pease formalised this in 1982 as the Byzantine Generals Problem: how can distributed nodes reach consensus when some participants may be actively deceptive? The answer required an algorithm that does not rely on any single node being trustworthy — consensus must emerge from the structure of the protocol itself.</p>
+<p>Shamir's 1979 secret sharing scheme showed that a secret can be split into n parts such that any k of them suffice to reconstruct the original, while fewer than k reveal nothing. This threshold property — that partial information is structurally useless below a certain threshold — became foundational for distributed trust.</p>
+${DIAGRAM_IDA}
+<p>Rabin's 1989 Information Dispersal Algorithm extended this: a message M can be encoded into n fragments, each of size |M|/k, such that any k fragments suffice to reconstruct M exactly. The fragments are smaller than the original, and no subset smaller than k carries meaningful information alone.</p>
+<p>Merkle's hash trees (1980) provided the verification layer: a structure in which any modification to any node is detectable from the root, without requiring trust in any individual node. This made tamper-evidence a structural property rather than an assumption about participant behaviour.</p>
+${DIAGRAM_ARCH}
+<div class="pull">The through-line across all of this work is the same: distribute not because centralisation is inconvenient, but because the failure of any single point must not be allowed to propagate into total failure. The algorithm absorbs the failure.</div>`,
+  l3: 'From Algorithm to Web3 — The Political Consequence',
+  s3: `<p>Back's Hashcash (2002) introduced proof-of-work as a mechanism for attaching computational cost to actions — originally as an anti-spam measure, but carrying within it a deeper principle: that participation in a shared system can be made costly without requiring a central authority to enforce the cost.</p>
+<p>Nakamoto's 2008 Bitcoin whitepaper assembled these components into a working system. The explicit motivation was the removal of trusted third parties from financial transactions. The problem stated in the opening paragraph is institutional: intermediaries introduce cost, introduce delay, and introduce single points of failure. The solution is algorithmic: a chain of cryptographic proofs that requires no trust in any participant, only trust in the mathematics.</p>
+<p>Buterin's 2014 Ethereum whitepaper extended this from currency to computation: any agreement, any rule, any institutional function could in principle be encoded as a self-executing program on a distributed ledger. The implication is not that all institutions should be replaced, but that the functions institutions perform — enforcing agreements, recording transactions, issuing credentials — can be separated from the institutions themselves.</p>
+<div class="pull">This is the political consequence of distributed algorithms. Not ideology. Not a manifesto. A technical observation that the functions of institutions are separable from their organisational form — and that the separation has already been mathematically demonstrated.</div>
+<p>cipher.learn is built at the intersection of these observations. The platform does not advocate for any particular political or economic position. It observes that the same architectural reasoning that motivated distributed networks, threshold cryptography, and decentralised consensus also motivates a different approach to how knowledge is held, structured, and made accessible — outside the single point of institutional gatekeeping.</p>
+${REFS}`,
+  l4: 'What This Is — and What It Is Not',
+  s4: `<p>This page is one example. It traces a single line of reasoning — from distributed networks, through threshold cryptography, to the emergence of web3 — not because this line is complete, but because it is followable.</p>
+<p>The purpose is specific: to offer a generation that did not experience centralised failure firsthand some understanding of why web3 was built the way it was. Not what it is. Why it was necessary, to the people who built it, given the structures they were responding to.</p>
+<p>The full platform connects these papers as nodes — their citations, their dependencies, their disagreements — rendered visually so that the relationships between ideas become navigable rather than assumed. That is a different kind of reading than a textbook provides.</p>
+<div class="pull">None of this is the answer. It is a way of approaching the question. Understanding why a system was designed the way it was is not the same as endorsing it — and it is not the same as understanding it fully. This is a starting point, not a conclusion.</div>`
+};
+
+// ── FRENCH (France) ────────────────────────────────────────────────────────
+C['fr'] = {
+  l1: 'Pourquoi la Distribution — L\'Échec Institutionnel',
+  s1: `<p>Le choix de la dispersion cryptographique comme fondement technique de cipher.learn n'est pas arbitraire. Il constitue une réponse directe à un problème structurel : les systèmes centralisés échouent. Ils échouent techniquement, et ils échouent socialement.</p>
+<p>Le rapport RAND de Paul Baran en 1964 décrivait un réseau de communications conçu pour survivre à une attaque nucléaire. Son intuition ne portait pas sur la redondance en tant que fonctionnalité — elle portait sur la redondance comme seule réponse honnête à la certitude de l'échec. Un réseau à centre unique ne risque pas simplement l'effondrement ; il le garantit. La question est seulement de savoir quand.</p>
+<div class="pull">L'architecture distribuée n'a pas été inventée par souci de modernité. Elle a été inventée parce que les systèmes centralisés sont structurellement fragiles — et cette fragilité vaut aussi bien pour les infrastructures de communication que pour les systèmes financiers ou les institutions éducatives.</div>
+<p>La même logique qui a motivé la conception du réseau de Baran s'applique à la connaissance. Lorsque l'institution détentrice du savoir échoue — par le contrôle d'accès, par les contraintes de ressources, par l'indifférence culturelle — le savoir ne devient pas simplement indisponible. Il devient invisible pour quiconque l'institution n'a pas déjà atteint.</p>
+<p>cipher.learn part de cette observation. La plateforme existe non parce que les institutions sont malveillantes, mais parce que leur structure engendre des angles morts qu'aucune institution ne peut corriger de l'intérieur.</p>`,
+  l2: 'Le Fondement Algorithmique',
+  s2: `<p>Le noyau théorique puise dans une lignée de travaux sur les systèmes distribués et les schémas à seuil — des recherches motivées non par la seule élégance, mais par le problème pratique de ce qui se produit lorsque des nœuds tombent en panne, lorsque les participants sont adversariaux, et lorsque la confiance ne peut être supposée.</p>
+<p>Lamport, Shostak et Pease ont formalisé cela en 1982 avec le Problème des Généraux Byzantins : comment des nœuds distribués peuvent-ils atteindre un consensus lorsque certains participants peuvent être activement trompeurs ? La réponse exigeait un algorithme ne reposant sur aucun nœud unique supposé digne de confiance — le consensus doit émerger de la structure du protocole lui-même.</p>
+<p>Le schéma de partage de secret de Shamir (1979) a montré qu'un secret peut être divisé en n parties telles que n'importe quelles k d'entre elles suffisent à reconstruire l'original, tandis que moins de k ne révèlent rien. Cette propriété de seuil — selon laquelle l'information partielle est structurellement inutile en deçà d'un certain seuil — est devenue fondatrice de la confiance distribuée.</p>
+${DIAGRAM_IDA}
+<p>L'Algorithme de Dispersion d'Information de Rabin (1989) a étendu ce principe : un message M peut être encodé en n fragments de taille |M|/k chacun, tels que n'importe quels k fragments suffisent à reconstruire M exactement. Aucun sous-ensemble inférieur à k ne véhicule d'information significative à lui seul.</p>
+<p>Les arbres de hachage de Merkle (1980) ont fourni la couche de vérification : une structure dans laquelle toute modification d'un nœud quelconque est détectable depuis la racine, sans nécessiter la confiance envers un nœud individuel. Cela a fait de la résistance à la falsification une propriété structurelle plutôt qu'une hypothèse sur le comportement des participants.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Le fil conducteur de l'ensemble de ces travaux est identique : distribuer non parce que la centralisation est incommode, mais parce que la défaillance d'un point unique ne doit pas pouvoir se propager en défaillance totale. L'algorithme absorbe la défaillance.</div>`,
+  l3: 'De l\'Algorithme au Web3 — La Conséquence Politique',
+  s3: `<p>Le Hashcash de Back (2002) a introduit la preuve de travail comme mécanisme permettant d'attacher un coût computationnel aux actions — initialement comme contre-mesure anti-spam, mais portant en lui un principe plus profond : que la participation à un système partagé peut être rendue coûteuse sans qu'une autorité centrale soit nécessaire pour faire respecter ce coût.</p>
+<p>Le livre blanc Bitcoin de Nakamoto (2008) a assemblé ces composants en un système opérationnel. La motivation explicite était l'élimination des tiers de confiance dans les transactions financières. Le problème énoncé dans le premier paragraphe est institutionnel : les intermédiaires introduisent des coûts, des délais et des points de défaillance uniques. La solution est algorithmique : une chaîne de preuves cryptographiques n'exigeant aucune confiance envers les participants, seulement envers les mathématiques.</p>
+<p>Le livre blanc Ethereum de Buterin (2014) a étendu ce principe de la monnaie au calcul : tout accord, toute règle, toute fonction institutionnelle pourrait en principe être encodé comme programme auto-exécutant sur un registre distribué. L'implication n'est pas que toutes les institutions devraient être remplacées, mais que les fonctions qu'elles remplissent — faire respecter les accords, enregistrer les transactions, délivrer des accréditations — peuvent être séparées des institutions elles-mêmes.</p>
+<div class="pull">Voilà la conséquence politique des algorithmes distribués. Ni idéologie. Ni manifeste. Une observation technique selon laquelle les fonctions des institutions sont séparables de leur forme organisationnelle — et que cette séparation a déjà été démontrée mathématiquement.</div>
+<p>cipher.learn est construit à l'intersection de ces observations. La plateforme ne défend aucune position politique ou économique particulière. Elle observe que le même raisonnement architectural qui a motivé les réseaux distribués, la cryptographie à seuil et le consensus décentralisé motive également une approche différente de la façon dont le savoir est détenu, structuré et rendu accessible — hors du point unique de contrôle institutionnel.</p>
+${REFS}`,
+  l4: 'Ce Que C\'est — et Ce Que Ce N\'est Pas',
+  s4: `<p>Cette page est un exemple parmi d'autres. Elle trace une ligne de raisonnement unique — des réseaux distribués, à travers la cryptographie à seuil, jusqu'à l'émergence du web3 — non parce que cette ligne est complète, mais parce qu'elle est suivable.</p>
+<p>L'objectif est précis : offrir à une génération qui n'a pas vécu directement l'échec des systèmes centralisés une compréhension des raisons pour lesquelles le web3 a été construit ainsi. Non pas ce qu'il est. Mais pourquoi il était nécessaire, pour ceux qui l'ont bâti, au regard des structures auxquelles ils répondaient.</p>
+<p>La plateforme complète relie ces articles comme des nœuds — leurs citations, leurs dépendances, leurs désaccords — rendus visuellement navigables plutôt que simplement supposés. C'est un mode de lecture que le manuel scolaire ne propose pas.</p>
+<div class="pull">Rien de tout cela n'est la réponse. C'est une façon d'approcher la question. Comprendre pourquoi un système a été conçu d'une certaine manière n'est pas la même chose que l'approuver — ni que le comprendre pleinement. C'est un point de départ, non une conclusion.</div>`
+};
+
+// ── FRENCH (Belgium) ───────────────────────────────────────────────────────
+C['fr-BE'] = {
+  l1: 'Pourquoi la Distribution — La Faillite Institutionnelle',
+  s1: `<p>Le choix de la dispersion cryptographique comme base technique de cipher.learn n'est pas fortuit. Il s'agit d'une réponse directe à un problème structurel : les systèmes centralisés font défaut. Ils font défaut techniquement, et ils font défaut socialement.</p>
+<p>Le rapport RAND de Paul Baran de 1964 décrivait un réseau de communications conçu pour survivre à une attaque nucléaire. Son intuition ne portait pas sur la redondance en tant que caractéristique — elle portait sur la redondance comme seule réponse honnête à la certitude de la défaillance. Un réseau à point central unique ne risque pas simplement l'effondrement ; il le garantit. La question est uniquement de savoir quand.</p>
+<div class="pull">L'architecture distribuée n'a pas été inventée par effet de mode. Elle a été inventée parce que les systèmes centralisés sont structurellement fragiles — et cette fragilité vaut autant pour les infrastructures de communication que pour les systèmes financiers ou les institutions d'enseignement.</div>
+<p>La même logique qui a motivé la conception du réseau de Baran s'applique au savoir. Lorsque l'institution qui détient le savoir fait défaut — par le contrôle d'accès, par les contraintes de ressources, par l'indifférence culturelle — le savoir ne devient pas simplement inaccessible. Il devient invisible pour toute personne que l'institution n'a pas encore rejointe.</p>
+<p>cipher.learn part de cette constatation. La plateforme existe non pas parce que les institutions sont malveillantes, mais parce que leur structure crée des zones d'ombre qu'aucune institution individuelle ne peut corriger de l'intérieur.</p>`,
+  l2: 'Le Fondement Algorithmique',
+  s2: `<p>Le noyau théorique puise dans une série de travaux sur les systèmes distribués et les schémas à seuil — des recherches motivées non par la seule élégance, mais par le problème concret de ce qui se passe lorsque des nœuds tombent en panne, lorsque les participants sont adversariaux, et lorsque la confiance ne peut être présumée.</p>
+<p>Lamport, Shostak et Pease ont formalisé cela en 1982 avec le Problème des Généraux Byzantins : comment des nœuds distribués peuvent-ils parvenir à un consensus lorsque certains participants peuvent être activement trompeurs ? La réponse requérait un algorithme ne s'appuyant sur aucun nœud unique supposé fiable — le consensus doit émerger de la structure même du protocole.</p>
+<p>Le schéma de partage de secret de Shamir (1979) a montré qu'un secret peut être divisé en n parties telles que n'importe quelles k d'entre elles suffisent à reconstituer l'original, tandis que moins de k ne révèlent rien. Cette propriété de seuil est devenue fondamentale pour la confiance distribuée.</p>
+${DIAGRAM_IDA}
+<p>L'Algorithme de Dispersion d'Information de Rabin (1989) a étendu ce principe : un message M peut être encodé en n fragments de taille |M|/k chacun, tels que n'importe quels k fragments suffisent à reconstituer M exactement. Aucun sous-ensemble inférieur à k ne porte d'information significative à lui seul.</p>
+<p>Les arbres de hachage de Merkle (1980) ont fourni la couche de vérification : une structure dans laquelle toute modification d'un nœud quelconque est détectable depuis la racine, sans requérir la confiance envers un nœud individuel. Cela fait de la résistance à la falsification une propriété structurelle.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Le fil conducteur de l'ensemble de ces travaux est identique : distribuer non parce que la centralisation pose des problèmes pratiques, mais parce que la défaillance d'un point unique ne peut être autorisée à se propager en défaillance totale. L'algorithme absorbe la défaillance.</div>`,
+  l3: 'De l\'Algorithme au Web3 — La Conséquence Politique',
+  s3: `<p>Le Hashcash de Back (2002) a introduit la preuve de travail comme mécanisme permettant d'associer un coût computationnel aux actions — initialement comme parade anti-spam, mais porteur d'un principe plus profond : que la participation à un système partagé peut être rendue coûteuse sans qu'une autorité centrale soit nécessaire pour en assurer l'application.</p>
+<p>Le livre blanc Bitcoin de Nakamoto (2008) a assemblé ces composants en un système fonctionnel. La motivation explicite était la suppression des tiers de confiance dans les transactions financières. Le problème énoncé dès le premier paragraphe est institutionnel : les intermédiaires introduisent des coûts, des délais et des points de défaillance uniques. La solution est algorithmique.</p>
+<p>Le livre blanc Ethereum de Buterin (2014) a étendu ce principe de la monnaie au calcul : tout accord, toute règle, toute fonction institutionnelle pourrait en principe être codé comme programme auto-exécutant sur un registre distribué. Les fonctions que les institutions remplissent peuvent être séparées des institutions elles-mêmes.</p>
+<div class="pull">Voilà la conséquence politique des algorithmes distribués. Ni idéologie. Ni manifeste. Une observation technique selon laquelle les fonctions des institutions sont séparables de leur forme organisationnelle — et que cette séparation a déjà été démontrée mathématiquement.</div>
+<p>cipher.learn est construit à l'intersection de ces observations. La plateforme ne prend pas position sur le plan politique ou économique. Elle observe que le même raisonnement architectural motive une approche différente de la façon dont le savoir est détenu, structuré et rendu accessible — hors du point unique de contrôle institutionnel.</p>
+${REFS}`,
+  l4: 'Ce Que C\'est — et Ce Que Ce N\'est Pas',
+  s4: `<p>Cette page est un exemple. Elle suit une ligne de raisonnement unique — des réseaux distribués, à travers la cryptographie à seuil, jusqu'à l'émergence du web3 — non parce que cette ligne est complète, mais parce qu'elle est traçable.</p>
+<p>L'objectif est précis : offrir à une génération qui n'a pas vécu directement la faillite des systèmes centralisés une compréhension des raisons pour lesquelles le web3 a été construit ainsi. Non ce qu'il est. Mais pourquoi il était nécessaire, pour ceux qui l'ont construit, au regard des structures auxquelles ils répondaient.</p>
+<p>La plateforme complète relie ces articles comme des nœuds — leurs citations, leurs dépendances, leurs désaccords — rendus visuellement navigables. C'est un mode de lecture différent de celui que propose le manuel.</p>
+<div class="pull">Rien de tout cela n'est la réponse. C'est une manière d'aborder la question. Comprendre pourquoi un système a été conçu d'une certaine façon n'est pas la même chose que l'approuver — ni que le comprendre entièrement. C'est un point de départ, non une conclusion.</div>`
+};
+
+// ── FRENCH (Switzerland) ──────────────────────────────────────────────────
+C['fr-CH'] = {
+  l1: 'Pourquoi la Distribution — La Défaillance Institutionnelle',
+  s1: `<p>Le choix de la dispersion cryptographique comme fondement technique de cipher.learn n'est pas fortuit. Il représente une réponse directe à un problème structurel : les systèmes centralisés défaillent. Ils défaillent techniquement, et ils défaillent socialement.</p>
+<p>Le rapport RAND de Paul Baran de 1964 décrivait un réseau de communications conçu pour résister à une attaque nucléaire. Son intuition ne portait pas sur la redondance comme caractéristique technique — elle portait sur la redondance comme seule réponse honnête à la certitude de la défaillance. Un réseau à centre unique ne risque pas simplement l'effondrement ; il le garantit. La question est seulement de savoir quand.</p>
+<div class="pull">L'architecture distribuée n'a pas été inventée par effet de mode. Elle a été inventée parce que les systèmes centralisés sont structurellement vulnérables — et cette vulnérabilité concerne tout autant les infrastructures de communication que les systèmes financiers ou les institutions de formation.</div>
+<p>La même logique qui a motivé la conception du réseau de Baran s'applique au savoir. Lorsque l'institution garante du savoir défaille — par le contrôle d'accès, par les contraintes de ressources, par l'indifférence culturelle — le savoir ne devient pas simplement inaccessible. Il devient invisible pour toute personne que l'institution n'a pas encore rejointe.</p>
+<p>cipher.learn part de ce constat. La plateforme existe non parce que les institutions sont malveillantes, mais parce que leur structure engendre des lacunes qu'aucune institution ne peut combler de l'intérieur.</p>`,
+  l2: 'Le Fondement Algorithmique',
+  s2: `<p>Le noyau théorique s'appuie sur une série de travaux relatifs aux systèmes distribués et aux schémas à seuil — des recherches motivées non par la seule élégance, mais par le problème concret de ce qui survient lorsque des nœuds tombent en panne, lorsque les participants sont adversariaux et lorsque la confiance ne peut être présupposée.</p>
+<p>Lamport, Shostak et Pease ont formalisé cela en 1982 avec le Problème des Généraux Byzantins : comment des nœuds distribués peuvent-ils parvenir à un consensus lorsque certains participants peuvent être activement trompeurs ? La réponse requérait un algorithme ne reposant sur aucun nœud unique supposé fiable — le consensus doit émaner de la structure même du protocole.</p>
+<p>Le schéma de partage de secret de Shamir (1979) a démontré qu'un secret peut être divisé en n parties telles que n'importe quelles k d'entre elles suffisent à reconstituer l'original, tandis que moins de k ne révèlent rien. Cette propriété de seuil est devenue fondatrice de la confiance distribuée.</p>
+${DIAGRAM_IDA}
+<p>L'Algorithme de Dispersion d'Information de Rabin (1989) a étendu ce principe : un message M peut être encodé en n fragments de taille |M|/k chacun, tels que n'importe quels k fragments suffisent à reconstituer M exactement. Aucun sous-ensemble inférieur à k ne véhicule d'information significative à lui seul.</p>
+<p>Les arbres de hachage de Merkle (1980) ont fourni la couche de vérification : une structure dans laquelle toute modification d'un nœud quelconque est détectable depuis la racine, sans nécessiter la confiance envers un nœud individuel.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Le fil conducteur de l'ensemble de ces travaux est identique : distribuer non parce que la centralisation est problématique en pratique, mais parce que la défaillance d'un point unique ne doit pas pouvoir se propager en défaillance totale. L'algorithme absorbe la défaillance.</div>`,
+  l3: 'De l\'Algorithme au Web3 — La Conséquence Politique',
+  s3: `<p>Le Hashcash de Back (2002) a introduit la preuve de travail comme mécanisme permettant d'associer un coût computationnel aux actions — initialement comme mesure préventive contre le spam, mais porteur d'un principe plus profond : que la participation à un système partagé peut être rendue coûteuse sans qu'une autorité centrale soit nécessaire pour en assurer l'application.</p>
+<p>Le livre blanc Bitcoin de Nakamoto (2008) a assemblé ces composants en un système opérationnel. La motivation explicite était l'élimination des tiers de confiance dans les transactions financières. Le problème énoncé dès le premier paragraphe est institutionnel : les intermédiaires introduisent des coûts, des délais et des points de défaillance uniques. La solution est algorithmique.</p>
+<p>Le livre blanc Ethereum de Buterin (2014) a étendu ce principe de la monnaie au calcul : tout accord, toute règle, toute fonction institutionnelle pourrait en principe être encodé comme programme auto-exécutant sur un registre distribué. Les fonctions que les institutions remplissent peuvent être séparées des institutions elles-mêmes.</p>
+<div class="pull">Voilà la conséquence politique des algorithmes distribués. Ni idéologie. Ni manifeste. Une observation technique selon laquelle les fonctions des institutions sont séparables de leur forme organisationnelle — et que cette séparation a déjà été démontrée mathématiquement.</div>
+<p>cipher.learn est construit à l'intersection de ces observations. La plateforme ne défend aucune position politique ou économique particulière. Elle constate que le même raisonnement architectural motive une approche différente de la façon dont le savoir est détenu, structuré et rendu accessible — hors du point unique de contrôle institutionnel.</p>
+${REFS}`,
+  l4: 'Ce Que C\'est — et Ce Que Ce N\'est Pas',
+  s4: `<p>Cette page constitue un exemple. Elle suit une ligne de raisonnement — des réseaux distribués, à travers la cryptographie à seuil, jusqu'à l'émergence du web3 — non parce que cette ligne est complète, mais parce qu'elle est traçable.</p>
+<p>L'objectif est précis : offrir à une génération qui n'a pas vécu directement la défaillance des systèmes centralisés une compréhension des raisons pour lesquelles le web3 a été construit de cette manière. Non ce qu'il est. Mais pourquoi il était nécessaire, pour ceux qui l'ont bâti, au regard des structures auxquelles ils répondaient.</p>
+<p>La plateforme complète relie ces articles comme des nœuds — leurs citations, leurs dépendances, leurs désaccords — rendus visuellement navigables plutôt que simplement présupposés. C'est un mode de lecture que le manuel ne propose pas.</p>
+<div class="pull">Rien de tout cela n'est la réponse. C'est une façon d'aborder la question. Comprendre pourquoi un système a été conçu d'une certaine manière n'est pas la même chose que l'approuver — ni que le comprendre pleinement. C'est un point de départ, non une conclusion.</div>`
+};
+
+// ── FRENCH (Quebec) ────────────────────────────────────────────────────────
+C['fr-CA'] = {
+  l1: 'Pourquoi la Distribution — L\'Échec Institutionnel',
+  s1: `<p>Le choix de la dispersion cryptographique comme base technique de cipher.learn n'est pas arbitraire. C'est une réponse directe à un problème structurel : les systèmes centralisés échouent. Ils échouent techniquement, et ils échouent socialement.</p>
+<p>Le rapport RAND de Paul Baran de 1964 décrivait un réseau de communications conçu pour résister à une attaque nucléaire. Son intuition ne portait pas sur la redondance comme fonctionnalité — elle portait sur la redondance comme seule réponse honnête à la certitude de l'échec. Un réseau à point central unique ne risque pas simplement l'effondrement ; il le garantit. La question est seulement de savoir quand.</p>
+<div class="pull">L'architecture distribuée n'a pas été inventée pour être tendance. Elle a été inventée parce que les systèmes centralisés sont structurellement fragiles — et cette fragilité s'applique autant aux infrastructures de communication qu'aux systèmes financiers ou aux institutions d'enseignement.</div>
+<p>La même logique qui a motivé la conception du réseau de Baran s'applique aux connaissances. Quand l'institution qui détient le savoir échoue — par le contrôle d'accès, par les contraintes de ressources, par l'indifférence culturelle — le savoir ne devient pas simplement inaccessible. Il devient invisible pour toute personne que l'institution n'a pas encore rejointe.</p>
+<p>cipher.learn part de ce constat. La plateforme existe non parce que les institutions sont malveillantes, mais parce que leur structure crée des angles morts qu'aucune institution ne peut corriger de l'intérieur.</p>`,
+  l2: 'Le Fondement Algorithmique',
+  s2: `<p>Le noyau théorique puise dans une lignée de travaux sur les systèmes distribués et les schémas à seuil — des recherches motivées non par la seule élégance, mais par le problème pratique de ce qui arrive quand des nœuds tombent en panne, quand les participants sont adversariaux, et quand la confiance ne peut pas être présumée.</p>
+<p>Lamport, Shostak et Pease ont formalisé cela en 1982 avec le Problème des Généraux Byzantins : comment des nœuds distribués peuvent-ils atteindre un consensus quand certains participants peuvent être activement trompeurs ? La réponse exigeait un algorithme ne se fiant à aucun nœud unique — le consensus doit émerger de la structure même du protocole.</p>
+<p>Le schéma de partage de secret de Shamir (1979) a démontré qu'un secret peut être divisé en n parties telles que n'importe quelles k d'entre elles suffisent à reconstruire l'original, tandis que moins de k ne révèlent rien. Cette propriété de seuil est devenue fondatrice de la confiance distribuée.</p>
+${DIAGRAM_IDA}
+<p>L'Algorithme de Dispersion d'Information de Rabin (1989) a étendu ce principe : un message M peut être encodé en n fragments de taille |M|/k chacun, tels que n'importe quels k fragments suffisent à reconstruire M exactement. Aucun sous-ensemble inférieur à k ne porte d'information significative à lui seul.</p>
+<p>Les arbres de hachage de Merkle (1980) ont fourni la couche de vérification : une structure où toute modification d'un nœud quelconque est détectable depuis la racine, sans avoir à faire confiance à un nœud individuel.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Le fil conducteur de l'ensemble de ces travaux est le même : distribuer non parce que la centralisation est incommode, mais parce que la défaillance d'un point unique ne doit pas pouvoir se propager en défaillance totale. L'algorithme absorbe la défaillance.</div>`,
+  l3: 'De l\'Algorithme au Web3 — La Conséquence Politique',
+  s3: `<p>Le Hashcash de Back (2002) a introduit la preuve de travail comme mécanisme permettant d'attacher un coût computationnel aux actions — d'abord comme parade contre le pourriel, mais portant en lui un principe plus profond : que la participation à un système partagé peut être rendue coûteuse sans qu'une autorité centrale soit nécessaire pour en faire respecter le coût.</p>
+<p>Le livre blanc Bitcoin de Nakamoto (2008) a assemblé ces composants en un système fonctionnel. La motivation explicite était l'élimination des tiers de confiance dans les transactions financières. Le problème énoncé dès le premier paragraphe est institutionnel : les intermédiaires introduisent des coûts, des délais et des points de défaillance uniques. La solution est algorithmique.</p>
+<p>Le livre blanc Ethereum de Buterin (2014) a étendu ce principe de la monnaie au calcul : tout accord, toute règle, toute fonction institutionnelle pourrait en principe être encodé comme programme auto-exécutant sur un registre distribué. Les fonctions que les institutions remplissent peuvent être séparées des institutions elles-mêmes.</p>
+<div class="pull">Voilà la conséquence politique des algorithmes distribués. Ni idéologie. Ni manifeste. Une observation technique selon laquelle les fonctions des institutions sont séparables de leur forme organisationnelle — et que cette séparation a déjà été démontrée mathématiquement.</div>
+<p>cipher.learn est construit à l'intersection de ces observations. La plateforme ne défend aucune position politique ou économique particulière. Elle constate que le même raisonnement architectural qui a motivé les réseaux distribués, la cryptographie à seuil et le consensus décentralisé motive également une approche différente de la façon dont le savoir est détenu, structuré et rendu accessible — en dehors du point de contrôle institutionnel unique.</p>
+${REFS}`,
+  l4: 'Ce Que C\'est — et Ce Que Ce N\'est Pas',
+  s4: `<p>Cette page est un exemple. Elle trace une ligne de raisonnement — des réseaux distribués, à travers la cryptographie à seuil, jusqu'à l'émergence du web3 — non parce que cette ligne est complète, mais parce qu'elle est traçable.</p>
+<p>L'objectif est précis : offrir à une génération qui n'a pas vécu directement l'échec des systèmes centralisés une compréhension des raisons pour lesquelles le web3 a été bâti de cette façon. Non ce qu'il est. Mais pourquoi il était nécessaire, pour ceux qui l'ont construit, au regard des structures auxquelles ils répondaient.</p>
+<p>La plateforme complète relie ces articles comme des nœuds — leurs citations, leurs dépendances, leurs désaccords — présentés visuellement pour que les liens entre les idées deviennent navigables. C'est un mode de lecture différent de celui du manuel.</p>
+<div class="pull">Rien de tout cela n'est la réponse. C'est une façon d'aborder la question. Comprendre pourquoi un système a été conçu d'une certaine façon n'est pas la même chose que l'approuver — ni que le comprendre entièrement. C'est un point de départ, non une conclusion.</div>`
+};
+
+// ── GERMAN (Germany) ──────────────────────────────────────────────────────
+C['de'] = {
+  l1: 'Warum Verteilung — Das Institutionelle Versagen',
+  s1: `<p>Die Wahl der kryptografischen Streuung als technisches Fundament von cipher.learn ist nicht willkürlich. Sie ist eine direkte Antwort auf ein strukturelles Problem: Zentralisierte Systeme versagen. Sie versagen technisch, und sie versagen gesellschaftlich.</p>
+<p>Paul Barans RAND-Bericht von 1964 beschrieb ein Kommunikationsnetzwerk, das einen Atomangriff überstehen sollte. Seine Erkenntnis galt nicht der Redundanz als technischem Feature — sie galt der Redundanz als einzig ehrlicher Antwort auf die Gewissheit des Versagens. Ein Netzwerk mit einem einzigen Zentrum riskiert nicht nur den Zusammenbruch; es garantiert ihn. Die Frage ist nur: wann.</p>
+<div class="pull">Verteilte Architektur wurde nicht erfunden, um zeitgemäß zu sein. Sie wurde erfunden, weil zentralisierte Systeme strukturell brüchig sind — und diese Brüchigkeit gilt gleichermaßen für Kommunikationsinfrastruktur, Finanzsysteme und Bildungseinrichtungen.</div>
+<p>Dieselbe Logik, die Barans Netzwerkdesign motivierte, gilt für Wissen. Wenn die Institution, die Wissen verwahrt, versagt — durch Zugangskontrolle, durch Ressourcenbeschränkungen, durch kulturelle Gleichgültigkeit — wird das Wissen nicht einfach unverfügbar. Es wird unsichtbar für jeden, den die Institution noch nicht erreicht hat.</p>
+<p>cipher.learn beginnt mit dieser Beobachtung. Die Plattform existiert nicht, weil Institutionen böswillig sind, sondern weil ihre Struktur blinde Flecken erzeugt, die keine einzelne Institution von innen heraus korrigieren kann.</p>`,
+  l2: 'Das Algorithmische Fundament',
+  s2: `<p>Der theoretische Kern schöpft aus einer Reihe von Arbeiten zu verteilten Systemen und Schwellenwertverfahren — Forschung, die nicht allein von Eleganz motiviert war, sondern vom praktischen Problem dessen, was geschieht, wenn Knoten ausfallen, wenn Teilnehmer adversarisch handeln und wenn Vertrauen nicht vorausgesetzt werden kann.</p>
+<p>Lamport, Shostak und Pease formalisierten dies 1982 als das Byzantinische-Generäle-Problem: Wie können verteilte Knoten einen Konsens erreichen, wenn einige Teilnehmer aktiv täuschend sein können? Die Antwort erforderte einen Algorithmus, der sich nicht darauf verlässt, dass ein einzelner Knoten vertrauenswürdig ist — der Konsens muss aus der Struktur des Protokolls selbst entstehen.</p>
+<p>Shamirs Secret-Sharing-Schema von 1979 zeigte, dass ein Geheimnis in n Teile aufgeteilt werden kann, sodass beliebige k davon ausreichen, um das Original zu rekonstruieren, während weniger als k nichts preisgeben. Diese Schwellenwert-Eigenschaft wurde grundlegend für verteiltes Vertrauen.</p>
+${DIAGRAM_IDA}
+<p>Rabins Informationsstreuungs-Algorithmus von 1989 erweiterte dies: Eine Nachricht M kann in n Fragmente der Größe |M|/k kodiert werden, sodass beliebige k Fragmente ausreichen, um M exakt zu rekonstruieren. Kein Teilmenge kleiner als k trägt allein bedeutungsvolle Information.</p>
+<p>Merkles Hash-Bäume (1980) lieferten die Verifikationsschicht: eine Struktur, in der jede Änderung an einem beliebigen Knoten von der Wurzel aus erkennbar ist, ohne Vertrauen in einen einzelnen Knoten zu benötigen. Damit wurde Manipulationssicherheit zu einer strukturellen Eigenschaft.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Der rote Faden durch all diese Arbeiten ist derselbe: Verteilen nicht weil Zentralisierung unbequem ist, sondern weil der Ausfall eines einzelnen Punktes nicht in einen Totalausfall propagieren darf. Der Algorithmus absorbiert den Ausfall.</div>`,
+  l3: 'Vom Algorithmus zu Web3 — Die Politische Konsequenz',
+  s3: `<p>Backs Hashcash (2002) führte Proof-of-Work als Mechanismus ein, um rechnerische Kosten an Aktionen zu knüpfen — ursprünglich als Anti-Spam-Maßnahme, aber in sich ein tieferes Prinzip tragend: dass die Teilnahme an einem gemeinsamen System kostspielig gemacht werden kann, ohne eine zentrale Autorität zur Durchsetzung dieser Kosten zu benötigen.</p>
+<p>Nakamotos Bitcoin-Whitepaper von 2008 assemblierte diese Komponenten zu einem funktionierenden System. Die explizite Motivation war die Entfernung vertrauenswürdiger Dritter aus Finanztransaktionen. Das im ersten Absatz genannte Problem ist institutionell: Intermediäre führen Kosten, Verzögerungen und einzelne Ausfallpunkte ein. Die Lösung ist algorithmisch: eine Kette kryptografischer Beweise, die kein Vertrauen in Teilnehmer erfordert — nur Vertrauen in die Mathematik.</p>
+<p>Buterins Ethereum-Whitepaper von 2014 erweiterte dies von der Währung auf die Berechnung: Jede Vereinbarung, jede Regel, jede institutionelle Funktion könnte prinzipiell als selbstausführendes Programm auf einem verteilten Ledger kodiert werden. Die Implikation ist nicht, dass alle Institutionen ersetzt werden sollten, sondern dass die Funktionen, die Institutionen erfüllen, von den Institutionen selbst getrennt werden können.</p>
+<div class="pull">Das ist die politische Konsequenz verteilter Algorithmen. Keine Ideologie. Kein Manifest. Eine technische Beobachtung, dass die Funktionen von Institutionen von ihrer Organisationsform trennbar sind — und dass die Trennung bereits mathematisch demonstriert wurde.</div>
+<p>cipher.learn ist am Schnittpunkt dieser Beobachtungen gebaut. Die Plattform vertritt keine bestimmte politische oder wirtschaftliche Position. Sie stellt fest, dass dasselbe architektonische Denken, das verteilte Netzwerke, Schwellenwert-Kryptografie und dezentralisierten Konsens motivierte, auch einen anderen Ansatz für die Art und Weise motiviert, wie Wissen verwahrt, strukturiert und zugänglich gemacht wird — außerhalb des einzelnen Punktes institutioneller Zugangskontrolle.</p>
+${REFS}`,
+  l4: 'Was Dies Ist — und Was Es Nicht Ist',
+  s4: `<p>Diese Seite ist ein Beispiel. Sie verfolgt eine einzige Argumentationslinie — von verteilten Netzwerken über Schwellenwert-Kryptografie bis zur Entstehung von Web3 — nicht weil diese Linie vollständig ist, sondern weil sie nachvollziehbar ist.</p>
+<p>Der Zweck ist spezifisch: einer Generation, die das Versagen zentralisierter Systeme nicht aus erster Hand erlebt hat, ein Verständnis dafür zu vermitteln, warum Web3 so gebaut wurde, wie es gebaut wurde. Nicht was es ist. Sondern warum es notwendig war — für die Menschen, die es gebaut haben, angesichts der Strukturen, auf die sie reagierten.</p>
+<p>Die vollständige Plattform verknüpft diese Arbeiten als Knoten — ihre Zitate, ihre Abhängigkeiten, ihre Widersprüche — visuell dargestellt, sodass die Beziehungen zwischen Ideen navigierbar werden statt bloß angenommen. Das ist eine andere Art des Lesens als die, die ein Lehrbuch bietet.</p>
+<div class="pull">Nichts davon ist die Antwort. Es ist ein Weg, sich der Frage zu nähern. Zu verstehen, warum ein System so gestaltet wurde, wie es wurde, ist nicht dasselbe wie es gutzuheißen — und nicht dasselbe wie es vollständig zu verstehen. Dies ist ein Ausgangspunkt, keine Schlussfolgerung.</div>`
+};
+
+// ── GERMAN (Austria) ──────────────────────────────────────────────────────
+C['de-AT'] = {
+  l1: 'Warum Verteilung — Das Institutionelle Versagen',
+  s1: `<p>Die Wahl der kryptografischen Streuung als technisches Fundament von cipher.learn ist nicht willkürlich. Sie ist eine direkte Antwort auf ein strukturelles Problem: Zentralisierte Systeme versagen. Sie versagen technisch, und sie versagen gesellschaftlich.</p>
+<p>Paul Barans RAND-Bericht vom Jänner 1964 beschrieb ein Kommunikationsnetzwerk, das einen Atomangriff überstehen sollte. Seine Erkenntnis galt nicht der Redundanz als technischem Feature — sie galt der Redundanz als einzig ehrlicher Antwort auf die Gewissheit des Versagens. Ein Netzwerk mit einem einzigen Zentrum riskiert nicht bloß den Zusammenbruch; es garantiert ihn. Die Frage ist nur: wann.</p>
+<div class="pull">Verteilte Architektur wurde nicht erfunden, um zeitgemäß zu wirken. Sie wurde erfunden, weil zentralisierte Systeme strukturell brüchig sind — und diese Brüchigkeit betrifft Kommunikationsinfrastruktur, Finanzsysteme und Bildungseinrichtungen gleichermaßen.</div>
+<p>Dieselbe Logik, die Barans Netzwerkdesign motivierte, gilt für Wissen. Wenn die Institution, die Wissen verwahrt, versagt — durch Zugangsbeschränkungen, durch Ressourcenknappheit, durch kulturelle Gleichgültigkeit — wird das Wissen nicht einfach unverfügbar. Es wird unsichtbar für alle, die die Institution noch nicht erreicht hat.</p>
+<p>cipher.learn beginnt mit dieser Beobachtung. Die Plattform existiert nicht, weil Institutionen böswillig wären, sondern weil ihre Struktur blinde Flecken erzeugt, die keine einzelne Institution von innen heraus beseitigen kann.</p>`,
+  l2: 'Das Algorithmische Fundament',
+  s2: `<p>Der theoretische Kern schöpft aus einer Reihe von Arbeiten zu verteilten Systemen und Schwellenwertverfahren — Forschung, die nicht allein von Eleganz motiviert war, sondern vom praktischen Problem dessen, was geschieht, wenn Knoten ausfallen, wenn Teilnehmer adversarisch agieren und wenn Vertrauen nicht vorausgesetzt werden kann.</p>
+<p>Lamport, Shostak und Pease formalisierten dies 1982 als das Byzantinische-Generäle-Problem: Wie können verteilte Knoten einen Konsens erzielen, wenn einzelne Teilnehmer aktiv täuschend vorgehen können? Die Antwort erforderte einen Algorithmus, der nicht darauf beruht, dass ein einzelner Knoten vertrauenswürdig ist — der Konsens muss aus der Protokollstruktur selbst hervorgehen.</p>
+<p>Shamirs Secret-Sharing-Schema von 1979 zeigte, dass ein Geheimnis in n Teile aufgeteilt werden kann, sodass beliebige k davon ausreichen, um das Original zu rekonstruieren, während weniger als k nichts preisgeben. Diese Schwellenwert-Eigenschaft wurde grundlegend für verteiltes Vertrauen.</p>
+${DIAGRAM_IDA}
+<p>Rabins Informationsstreuungs-Algorithmus von 1989 erweiterte dies: Eine Nachricht M kann in n Fragmente der Größe |M|/k kodiert werden, sodass beliebige k Fragmente ausreichen, um M exakt zu rekonstruieren. Kein Teilmenge kleiner als k trägt allein bedeutungsvolle Information.</p>
+<p>Merkles Hash-Bäume (1980) lieferten die Verifikationsschicht: eine Struktur, in der jede Änderung an einem beliebigen Knoten von der Wurzel aus erkennbar ist, ohne auf einzelne Knoten vertrauen zu müssen.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Der rote Faden durch all diese Arbeiten ist derselbe: Verteilen nicht weil Zentralisierung unbequem ist, sondern weil der Ausfall eines einzelnen Punktes nicht auf das Gesamtsystem übergreifen darf. Der Algorithmus fängt den Ausfall auf.</div>`,
+  l3: 'Vom Algorithmus zu Web3 — Die Politische Konsequenz',
+  s3: `<p>Backs Hashcash (2002) führte Proof-of-Work als Mechanismus ein, um rechnerische Kosten an Aktionen zu knüpfen — ursprünglich als Anti-Spam-Maßnahme, doch in sich ein tieferes Prinzip tragend: dass die Teilnahme an einem gemeinsamen System kostspielig gemacht werden kann, ohne eine zentrale Instanz zur Durchsetzung dieser Kosten zu benötigen.</p>
+<p>Nakamotos Bitcoin-Whitepaper von 2008 assemblierte diese Komponenten zu einem funktionierenden System. Die explizite Motivation war die Ausschaltung vertrauenswürdiger Dritter bei Finanztransaktionen. Das im ersten Absatz formulierte Problem ist institutioneller Natur: Intermediäre verursachen Kosten, Verzögerungen und einzelne Ausfallpunkte. Die Lösung ist algorithmisch.</p>
+<p>Buterins Ethereum-Whitepaper von 2014 weitete dies von der Währung auf die Berechnung aus: Jede Vereinbarung, jede Regel, jede institutionelle Funktion könnte grundsätzlich als selbstausführendes Programm auf einem verteilten Ledger kodiert werden. Die Schlussfolgerung ist nicht, dass alle Institutionen ersetzt werden sollten, sondern dass die Aufgaben, die Institutionen erfüllen, von den Institutionen selbst entkoppelt werden können.</p>
+<div class="pull">Das ist die politische Konsequenz verteilter Algorithmen. Keine Ideologie. Kein Manifest. Eine technische Beobachtung, dass die Funktionen von Institutionen von ihrer Organisationsform trennbar sind — und dass diese Trennung mathematisch bereits nachgewiesen wurde.</div>
+<p>cipher.learn ist am Schnittpunkt dieser Beobachtungen entstanden. Die Plattform bezieht keine bestimmte politische oder wirtschaftliche Position. Sie stellt fest, dass dasselbe architektonische Denken, das verteilte Netzwerke, Schwellenwert-Kryptografie und dezentralisierten Konsens motivierte, auch einen anderen Zugang zur Art und Weise motiviert, wie Wissen verwahrt, strukturiert und zugänglich gemacht wird — außerhalb des einzelnen Punktes institutioneller Zugangskontrolle.</p>
+${REFS}`,
+  l4: 'Was Dies Ist — und Was Es Nicht Ist',
+  s4: `<p>Diese Seite ist ein Beispiel. Sie verfolgt eine einzige Argumentationslinie — von verteilten Netzwerken über Schwellenwert-Kryptografie bis zur Entstehung von Web3 — nicht weil diese Linie vollständig ist, sondern weil sie nachvollziehbar ist.</p>
+<p>Der Zweck ist konkret: einer Generation, die das Versagen zentralisierter Systeme nicht aus eigener Erfahrung kennt, ein Verständnis dafür zu vermitteln, warum Web3 so gestaltet wurde, wie es gestaltet wurde. Nicht was es ist. Sondern warum es notwendig war — für jene, die es gebaut haben, angesichts der Strukturen, auf die sie reagierten.</p>
+<p>Die vollständige Plattform verknüpft diese Arbeiten als Knoten — ihre Zitate, ihre Abhängigkeiten, ihre Widersprüche — visuell aufbereitet, sodass die Zusammenhänge zwischen Ideen navigierbar werden. Das ist eine andere Form des Lesens als jene, die ein Lehrbuch ermöglicht.</p>
+<div class="pull">Nichts davon ist die Antwort. Es ist ein Weg, sich der Frage anzunähern. Zu verstehen, warum ein System so konzipiert wurde, wie es wurde, bedeutet weder es gutzuheißen noch es vollständig zu durchdringen. Dies ist ein Ausgangspunkt, keine Schlussfolgerung.</div>`
+};
+
+// ── GERMAN (Switzerland) ──────────────────────────────────────────────────
+C['de-CH'] = {
+  l1: 'Warum Verteilung — Das Institutionelle Versagen',
+  s1: `<p>Die Wahl der kryptografischen Streuung als technisches Fundament von cipher.learn ist nicht willkürlich. Sie ist eine direkte Antwort auf ein strukturelles Problem: Zentralisierte Systeme versagen. Sie versagen technisch, und sie versagen gesellschaftlich.</p>
+<p>Paul Barans RAND-Bericht von 1964 beschrieb ein Kommunikationsnetzwerk, das einen Atomangriff überstehen sollte. Seine Erkenntnis galt nicht der Redundanz als technischem Merkmal — sie galt der Redundanz als einzig ehrlicher Antwort auf die Gewissheit des Versagens. Ein Netzwerk mit einem einzigen Zentrum riskiert nicht bloss den Zusammenbruch; es garantiert ihn. Die Frage ist nur: wann.</p>
+<div class="pull">Verteilte Architektur wurde nicht erfunden, um zeitgemäss zu erscheinen. Sie wurde erfunden, weil zentralisierte Systeme strukturell anfällig sind — und diese Anfälligkeit gilt gleichermassen für Kommunikationsinfrastrukturen, Finanzsysteme und Bildungsinstitutionen.</div>
+<p>Dieselbe Logik, die Barans Netzwerkdesign motivierte, gilt für Wissen. Wenn die Institution, die Wissen verwahrt, versagt — durch Zugangsbeschränkungen, durch Ressourcenknappheit, durch kulturelle Gleichgültigkeit — wird das Wissen nicht einfach unzugänglich. Es wird unsichtbar für alle, die die Institution noch nicht erreicht hat.</p>
+<p>cipher.learn beginnt mit dieser Beobachtung. Die Plattform existiert nicht, weil Institutionen böswillig wären, sondern weil ihre Struktur blinde Flecken erzeugt, die keine einzelne Institution von innen heraus beheben kann.</p>`,
+  l2: 'Das Algorithmische Fundament',
+  s2: `<p>Der theoretische Kern schöpft aus einer Reihe von Arbeiten zu verteilten Systemen und Schwellenwertverfahren — Forschung, die nicht allein durch Eleganz motiviert war, sondern durch das praktische Problem dessen, was geschieht, wenn Knoten ausfallen, wenn Teilnehmer adversarisch handeln und wenn Vertrauen nicht vorausgesetzt werden kann.</p>
+<p>Lamport, Shostak und Pease formalisierten dies 1982 als Byzantinisches-Generäle-Problem: Wie können verteilte Knoten einen Konsens finden, wenn einzelne Teilnehmer aktiv täuschend handeln können? Die Antwort erforderte einen Algorithmus, der sich nicht auf die Vertrauenswürdigkeit eines einzelnen Knotens stützt — der Konsens muss aus der Struktur des Protokolls selbst entstehen.</p>
+<p>Shamirs Secret-Sharing-Verfahren von 1979 zeigte, dass ein Geheimnis in n Teile aufgeteilt werden kann, sodass beliebige k davon ausreichen, um das Original zu rekonstruieren, während weniger als k nichts preisgeben. Diese Schwellenwert-Eigenschaft wurde grundlegend für verteiltes Vertrauen.</p>
+${DIAGRAM_IDA}
+<p>Rabins Informationsstreuungs-Algorithmus von 1989 erweiterte dies: Eine Nachricht M kann in n Fragmente der Grösse |M|/k kodiert werden, sodass beliebige k Fragmente ausreichen, um M exakt zu rekonstruieren. Kein Teilmenge kleiner als k trägt allein bedeutungsvolle Information.</p>
+<p>Merkles Hash-Bäume (1980) lieferten die Verifikationsschicht: eine Struktur, in der jede Änderung an einem beliebigen Knoten von der Wurzel aus erkennbar ist, ohne auf einzelne Knoten vertrauen zu müssen.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Der rote Faden durch all diese Arbeiten ist derselbe: Verteilen nicht weil Zentralisierung unbequem ist, sondern weil der Ausfall eines einzelnen Punktes nicht in einen Totalausfall propagieren darf. Der Algorithmus absorbiert den Ausfall.</div>`,
+  l3: 'Vom Algorithmus zu Web3 — Die Politische Konsequenz',
+  s3: `<p>Backs Hashcash (2002) führte Proof-of-Work als Mechanismus ein, um rechnerische Kosten an Aktionen zu knüpfen — ursprünglich als Anti-Spam-Massnahme, doch in sich ein tieferes Prinzip tragend: dass die Teilnahme an einem gemeinsamen System kostspielig gemacht werden kann, ohne eine zentrale Instanz zur Durchsetzung zu benötigen.</p>
+<p>Nakamotos Bitcoin-Whitepaper von 2008 assemblierte diese Komponenten zu einem funktionierenden System. Die explizite Motivation war die Ausschaltung vertrauenswürdiger Dritter bei Finanztransaktionen. Das Problem ist institutioneller Natur: Intermediäre verursachen Kosten, Verzögerungen und einzelne Ausfallpunkte. Die Lösung ist algorithmisch.</p>
+<p>Buterins Ethereum-Whitepaper von 2014 weitete dies von der Währung auf die Berechnung aus: Jede Vereinbarung, jede Regel, jede institutionelle Funktion könnte grundsätzlich als selbstausführendes Programm auf einem verteilten Ledger kodiert werden. Die Funktionen, die Institutionen wahrnehmen, können von den Institutionen selbst getrennt werden.</p>
+<div class="pull">Das ist die politische Konsequenz verteilter Algorithmen. Keine Ideologie. Kein Manifest. Eine technische Feststellung, dass die Funktionen von Institutionen von ihrer Organisationsform trennbar sind — und dass diese Trennung mathematisch bereits nachgewiesen wurde.</div>
+<p>cipher.learn ist am Schnittpunkt dieser Beobachtungen gebaut. Die Plattform bezieht keine bestimmte politische oder wirtschaftliche Position. Sie stellt fest, dass dasselbe architektonische Denken, das verteilte Netzwerke, Schwellenwert-Kryptografie und dezentralisierten Konsens motivierte, auch einen anderen Zugang zur Art motiviert, wie Wissen verwahrt, strukturiert und zugänglich gemacht wird — ausserhalb des einzelnen Punktes institutioneller Zugangskontrolle.</p>
+${REFS}`,
+  l4: 'Was Dies Ist — und Was Es Nicht Ist',
+  s4: `<p>Diese Seite ist ein Beispiel. Sie verfolgt eine einzige Argumentationslinie — von verteilten Netzwerken über Schwellenwert-Kryptografie bis zur Entstehung von Web3 — nicht weil diese Linie vollständig ist, sondern weil sie nachvollziehbar ist.</p>
+<p>Der Zweck ist konkret: einer Generation, die das Versagen zentralisierter Systeme nicht aus eigener Erfahrung kennt, ein Verständnis dafür zu vermitteln, warum Web3 so gestaltet wurde, wie es gestaltet wurde. Nicht was es ist. Sondern warum es notwendig war — für jene, die es entwickelt haben, angesichts der Strukturen, auf die sie reagierten.</p>
+<p>Die vollständige Plattform verbindet diese Arbeiten als Knoten — ihre Zitate, ihre Abhängigkeiten, ihre Widersprüche — visuell dargestellt, sodass die Zusammenhänge zwischen Ideen navigierbar werden statt bloss vorausgesetzt. Das ist eine andere Art zu lesen als jene, die ein Lehrbuch ermöglicht.</p>
+<div class="pull">Nichts davon ist die Antwort. Es ist ein Weg, sich der Frage anzunähern. Zu verstehen, warum ein System so konzipiert wurde, wie es wurde, bedeutet weder es gutzuheissen noch es vollständig zu verstehen. Dies ist ein Ausgangspunkt, keine Schlussfolgerung.</div>`
+};
+
+// ── DUTCH ─────────────────────────────────────────────────────────────────
+C['nl'] = {
+  l1: 'Waarom Distributie — Het Institutioneel Falen',
+  s1: `<p>De keuze voor cryptografische verspreiding als technisch fundament van cipher.learn is niet willekeurig. Het is een directe reactie op een structureel probleem: gecentraliseerde systemen falen. Ze falen technisch, en ze falen sociaal.</p>
+<p>Paul Barans RAND-rapport uit 1964 beschreef een communicatienetwerk dat een nucleaire aanval zou overleven. Zijn inzicht ging niet over redundantie als een kenmerk — het ging over redundantie als de enige eerlijke reactie op de zekerheid van falen. Een netwerk met één enkel centrum riskeert niet alleen instorting; het garandeert die. De vraag is alleen wanneer.</p>
+<div class="pull">Gedistribueerde architectuur werd niet uitgevonden om modieus te zijn. Ze werd uitgevonden omdat gecentraliseerde systemen structureel kwetsbaar zijn — en die kwetsbaarheid geldt evenzeer voor communicatie-infrastructuur, financiële systemen als voor onderwijsinstellingen.</div>
+<p>Dezelfde logica die Barans netwerkontwerp motiveerde, geldt voor kennis. Wanneer de instelling die kennis beheert faalt — door toegangscontrole, door middelenbeperkingen, door culturele onverschilligheid — wordt de kennis niet simpelweg onbeschikbaar. Ze wordt onzichtbaar voor iedereen die de instelling nog niet heeft bereikt.</p>
+<p>cipher.learn begint vanuit deze observatie. Het platform bestaat niet omdat instellingen kwaadwillig zijn, maar omdat hun structuur blinde vlekken creëert die geen enkele instelling van binnenuit kan corrigeren.</p>`,
+  l2: 'Het Algoritmisch Fundament',
+  s2: `<p>De theoretische kern put uit een reeks werken over gedistribueerde systemen en drempelschema's — onderzoek gemotiveerd niet alleen door elegantie, maar door het praktische probleem van wat er gebeurt wanneer knooppunten uitvallen, wanneer deelnemers vijandig zijn en wanneer vertrouwen niet kan worden aangenomen.</p>
+<p>Lamport, Shostak en Pease formaliseerden dit in 1982 als het Byzantijnse Generaalsprobleem: hoe kunnen gedistribueerde knooppunten consensus bereiken wanneer sommige deelnemers actief misleidend kunnen zijn? Het antwoord vereiste een algoritme dat niet afhankelijk is van één enkel betrouwbaar knooppunt — consensus moet voortkomen uit de structuur van het protocol zelf.</p>
+<p>Shamirs geheimdeelschema uit 1979 toonde aan dat een geheim in n delen kan worden gesplitst zodat willekeurige k ervan voldoende zijn om het origineel te reconstrueren, terwijl minder dan k niets onthult. Deze drempeleigenschap werd fundamenteel voor gedistribueerd vertrouwen.</p>
+${DIAGRAM_IDA}
+<p>Rabins Informatiedispersie-algoritme uit 1989 breidde dit uit: een bericht M kan worden gecodeerd in n fragmenten van elk grootte |M|/k, zodat willekeurige k fragmenten voldoende zijn om M exact te reconstrueren. Geen enkele deelverzameling kleiner dan k draagt op zichzelf betekenisvolle informatie.</p>
+<p>Merkles hash-bomen (1980) leverden de verificatielaag: een structuur waarin elke wijziging aan een willekeurig knooppunt detecteerbaar is vanuit de wortel, zonder vertrouwen te vereisen in een individueel knooppunt. Dit maakte manipulatiebestendigheid tot een structurele eigenschap.</p>
+${DIAGRAM_ARCH}
+<div class="pull">De rode draad door al dit werk is hetzelfde: verspreid niet omdat centralisatie ongemakkelijk is, maar omdat het falen van één enkel punt niet mag propageren naar totaal falen. Het algoritme absorbeert het falen.</div>`,
+  l3: 'Van Algoritme naar Web3 — De Politieke Consequentie',
+  s3: `<p>Backs Hashcash (2002) introduceerde proof-of-work als mechanisme om rekenkundige kosten aan acties te koppelen — oorspronkelijk als anti-spaammaatregel, maar met daarin een dieper principe: dat deelname aan een gedeeld systeem kostbaar kan worden gemaakt zonder een centrale autoriteit nodig te hebben om die kosten af te dwingen.</p>
+<p>Nakamotos Bitcoin-whitepaper uit 2008 assembleerde deze componenten tot een werkend systeem. De expliciete motivatie was het verwijderen van vertrouwde derde partijen uit financiële transacties. Het probleem in de openingsparagraaf is institutioneel: tussenpersonen introduceren kosten, vertraging en enkelvoudige storingspunten. De oplossing is algoritmisch: een keten van cryptografische bewijzen die geen vertrouwen in deelnemers vereist — alleen vertrouwen in de wiskunde.</p>
+<p>Buterins Ethereum-whitepaper uit 2014 breidde dit uit van valuta naar berekening: elke overeenkomst, elke regel, elke institutionele functie kon in principe worden gecodeerd als een zelfuitvoerend programma op een gedistribueerd grootboek. De implicatie is niet dat alle instellingen vervangen moeten worden, maar dat de functies die instellingen vervullen, kunnen worden gescheiden van de instellingen zelf.</p>
+<div class="pull">Dit is de politieke consequentie van gedistribueerde algoritmen. Geen ideologie. Geen manifest. Een technische observatie dat de functies van instellingen scheidbaar zijn van hun organisatievorm — en dat die scheiding al mathematisch is aangetoond.</div>
+<p>cipher.learn is gebouwd op het snijpunt van deze observaties. Het platform neemt geen politiek of economisch standpunt in. Het constateert dat dezelfde architectonische redenering die gedistribueerde netwerken, drempelcryptografie en gedecentraliseerde consensus motiveerde, ook een andere benadering motiveert van hoe kennis wordt bewaard, gestructureerd en toegankelijk gemaakt — buiten het enkelvoudige punt van institutionele toegangscontrole.</p>
+${REFS}`,
+  l4: 'Wat Dit Is — en Wat Het Niet Is',
+  s4: `<p>Deze pagina is één voorbeeld. Ze volgt een enkele redenering — van gedistribueerde netwerken, via drempelcryptografie, naar het ontstaan van web3 — niet omdat deze lijn volledig is, maar omdat ze te volgen is.</p>
+<p>Het doel is specifiek: een generatie die de mislukking van gecentraliseerde systemen niet zelf heeft meegemaakt enig begrip bieden van waarom web3 op deze manier is gebouwd. Niet wat het is. Maar waarom het noodzakelijk was — voor degenen die het bouwden, gegeven de structuren waarop zij reageerden.</p>
+<p>Het volledige platform verbindt deze papers als knooppunten — hun citaties, hun afhankelijkheden, hun tegenstrijdigheden — visueel weergegeven zodat de relaties tussen ideeën navigeerbaar worden in plaats van verondersteld. Dat is een andere manier van lezen dan een leerboek biedt.</p>
+<div class="pull">Niets hiervan is het antwoord. Het is een manier om de vraag te benaderen. Begrijpen waarom een systeem op een bepaalde manier is ontworpen, is niet hetzelfde als het onderschrijven — en het is niet hetzelfde als het volledig begrijpen. Dit is een beginpunt, geen conclusie.</div>`
+};
+
+// ── LUXEMBOURGISH ─────────────────────────────────────────────────────────
+C['lb'] = {
+  l1: 'Firwat Verdeelung — D\'Institutionellt Versoen',
+  s1: `<p>D\'Wiel vun der kryptografescher Verbreedung als techneschem Fundament vu cipher.learn ass net willkürlich. Et ass eng direkt Äntwert op e strukturellt Problem: Zentraliséiert Systemer versoen. Si versoen technesch, a si versoen gesellschaftlech.</p>
+<p>Paul Baran säin RAND-Rapport vun 1964 huet e Kommunikatiounsnetz beschriwwen, dat e Atomkrich iwwerliewe sollt. Säin Abléck war net iwwer Redundanz als Feature — et war iwwer Redundanz als eenzeg ehrlecher Äntwert op d\'Gewëssheet vum Versoen. E Netz mat engem eenzege Zentrum riskéiert net nëmmen d\'Zesummbriechen; et garantéiert et. D\'Fro ass nëmmen: wéini.</p>
+<div class="pull">Verdeelt Architektur gouf net erfonne fir modisch ze sinn. Si gouf erfonne well zentraliséiert Systemer strukturell brücheg sinn — an dës Brüchegkeet gëllt gläichermoosse fir Kommunikatiounsinfrastruktur, Finanzsystemer a Bildungsinstitutioune.</div>
+<p>Déi selwecht Logik, déi Baran säin Netzdesign motivéiert huet, gëllt fir Wëssen. Wann d\'Institutioun, déi Wëssen hält, verseet — duerch Zougangskontroll, duerch Ressourcebeschränkungen, duerch kulturell Gläichgültegkeet — gëtt d\'Wëssen net einfach onverfügbar. Et gëtt onsichtbar fir jiddereen, deen d\'Institutioun nach net erreecht huet.</p>
+<p>cipher.learn fänkt mat dëser Observatioun un. D\'Plattform existéiert net well Institutiounen béiswëlleg sinn, mä well hir Struktur blo Flecken schafe, déi keng eenzeg Institutioun vun bannenzent korrigéiere kann.</p>`,
+  l2: 'D\'Algoritmescht Fundament',
+  s2: `<p>De theoretesche Kär schëpft aus enger Rei vu Wierker iwwer verdeelt Systemer a Schwellenwäertverfahren — Fuerschung, déi net nëmme vun Eleganz motivéiert war, mä vum praktesche Problem vun deem, wat geschitt, wann Noden ausfalen, wann Deelhueler adversariesch handelen, a wann Vertrauen net virausgesat ka ginn.</p>
+<p>Lamport, Shostak a Pease hunn dat 1982 als Byzantinescht-Generäls-Problem formaliséiert: Wéi kënnen verdeelt Noden e Konsens erreechen, wann e puer Deelhueler aktiv täuschend kënne sinn? D\'Äntwert huet en Algorithmus gefuerdert, dee sech net dorop verloosst, datt e eenzege Node vertrauenswürdeg ass — de Konsens muss aus der Struktur vum Protokoll selwer entstoen.</p>
+<p>Shamir säi Secret-Sharing-Schema vun 1979 huet gewisen, datt e Geheimnis a n Deeler opgedeelt ka ginn, sou datt béiweg k dovunner duerginn, fir den Original ze rekonstruéieren, während manner wéi k näischt verroden. Dës Schwellenwäert-Eegeschaft ass fundamental fir verdeelt Vertrauen ginn.</p>
+${DIAGRAM_IDA}
+<p>Rabin säin Informatiounsverbreedungs-Algorithmus vun 1989 huet dat erweidert: eng Nooriicht M kann a n Fragmente vun der Gréisst |M|/k kodéiert ginn, sou datt béiweg k Fragmente duerginn, fir M exakt ze rekonstruéieren. Keng Teilmenge méi kleng wéi k dréit eleng bedeitungsvolle Informatioun.</p>
+<p>Merkle séng Hash-Beem (1980) hunn d\'Verifikatiounsschicht geliwwert: eng Struktur, an där all Ännerung un engem beliebege Node vun der Wuerzel aus erkennbar ass, ouni Vertrauen an en eenzele Node ze brauchen.</p>
+${DIAGRAM_ARCH}
+<div class="pull">De roude Fuedem duerch all dës Wierker ass deeselwechten: verdeelen net well Zentraliséierung ombequem ass, mä well d\'Versoen vun engem eenzege Punkt sech net an en Totalversoen verbreede däerf. Den Algorithmus absorbéiert d\'Versoen.</div>`,
+  l3: 'Vum Algorithmus zu Web3 — D\'Politesch Konsequenz',
+  s3: `<p>Back säi Hashcash (2002) huet Proof-of-Work als Mechanismus agefouert, fir rechnerescht Käschten un Aktiounen ze koppelen — ursprénglech als Anti-Spam-Moossnam, mä an sech en déifert Prinzip draend: datt d\'Participatioun un engem gemeinsame System käschtspilleg ka ginn ouni eng zentral Autoritéit fir d\'Duerchsetzen vun dëse Käschten ze brauchen.</p>
+<p>Nakamoto säi Bitcoin-Whitepaper vun 2008 huet dës Komponente zu engem funktionéierenden System zesummegesat. D\'explizit Motivatioun war d\'Erausmauere vu vertrauenswürdegen Drëtten aus Finanztransaktioune. D\'Problem am éischte Paragraf ass institutionell: Intermédiären droen Käschten, Verzögerungen a eenzeg Ausfallpunkte bei. D\'Léisung ass algoritmisch.</p>
+<p>Buterin säi Ethereum-Whitepaper vun 2014 huet dat vun der Währung op d\'Berechnung erweidert: all Accord, all Regel, all institutionell Funktioun kéint prinzipiell als selbstausféierend Programm op engem verdeelten Ledger kodéiert ginn. Déi Funktiounen, déi Institutiounen erfëllen, kënne vun den Institutiounen selwer getrennt ginn.</p>
+<div class="pull">Dat ass d\'politesch Konsequenz vu verdeelten Algorithmen. Keng Ideologie. Keen Manifest. Eng technesch Observatioun, datt d\'Funktiounen vun Institutiounen vu hierer Organisatiounsform trennbar sinn — a datt dës Trennung scho mathematesch demonstréiert gouf.</div>
+<p>cipher.learn ass um Schnittpunkt vun dësen Observatioune gebaut. D\'Plattform verdeedegt keng bestëmmte politesch oder wirtschaftlech Positioun. Si stellt fest, datt déiselwecht architektonesch Iwwerleeung, déi verdeelt Netzwierker, Schwellenwäert-Kryptografie a dezentraliséierte Konsens motivéiert huet, och en aneren Zougang zur Aart motivéiert, wéi Wëssen verwahrt, strukturéiert a zugänglech gemaach gëtt — ausserhalb vum eenzege Punkt vun institutioneller Zougangskontroll.</p>
+${REFS}`,
+  l4: 'Wat Dat Ass — a Wat Et Net Ass',
+  s4: `<p>Dës Säit ass e Beispill. Si verfollegt eng eenzeg Argumentatiounszeile — vu verdeelten Netzwierker, iwwer Schwellenwäert-Kryptografie, bis zur Entstéiung vu Web3 — net well dës Zeile komplett ass, mä well si nozeféieren ass.</p>
+<p>Den Zweck ass spezifesch: enger Generatioun, déi d\'Versoen vu zentraliséierte Systemer net aus eegener Erfahrung kennt, e Verständnis dofir ze vermëttelen, firwat Web3 sou gebaut gouf, wéi et gebaut gouf. Net wat et ass. Mä firwat et néideg war — fir déi, déi et gebaut hunn, ugesichts vun de Strukturen, op déi si geäntwert hunn.</p>
+<p>D\'komplett Plattform verbënnt dës Aarbechte als Noden — hir Zitater, hir Ofhängegkeeten, hir Widersproch — visuell duergestallt, sou datt d\'Bezéiunge tëschent Iddien navigierbar ginn amplaz nëmme virgaangen. Dat ass eng aner Aart ze liesen wéi déi, déi e Léierbuch ubitt.</p>
+<div class="pull">Näischt dovunner ass d\'Äntwert. Et ass eng Manéier, sech der Fro unzenoën. Ze verstoen, firwat e System sou konzipéiert gouf, wéi et gouf, ass net datselwecht wéi et gutzheeschen — a net datselwecht wéi et vollständeg ze verstoen. Dat ass e Startpunkt, keng Schlussfolgerung.</div>`
+};
+
+// ── ITALIAN ───────────────────────────────────────────────────────────────
+C['it'] = {
+  l1: 'Perché la Distribuzione — Il Fallimento Istituzionale',
+  s1: `<p>La scelta della dispersione crittografica come fondamento tecnico di cipher.learn non è arbitraria. È una risposta diretta a un problema strutturale: i sistemi centralizzati falliscono. Falliscono tecnicamente, e falliscono socialmente.</p>
+<p>Il rapporto RAND di Paul Baran del 1964 descriveva una rete di comunicazioni progettata per sopravvivere a un attacco nucleare. La sua intuizione non riguardava la ridondanza come funzionalità — riguardava la ridondanza come unica risposta onesta alla certezza del fallimento. Una rete con un singolo centro non rischia soltanto il collasso; lo garantisce. La domanda è solo quando.</p>
+<div class="pull">L'architettura distribuita non è stata inventata per essere alla moda. È stata inventata perché i sistemi centralizzati sono strutturalmente fragili — e quella fragilità si applica in egual misura alle infrastrutture di comunicazione, ai sistemi finanziari e alle istituzioni educative.</div>
+<p>La stessa logica che ha motivato il design di rete di Baran si applica alla conoscenza. Quando l'istituzione che detiene la conoscenza fallisce — attraverso il controllo degli accessi, attraverso i vincoli di risorse, attraverso l'indifferenza culturale — la conoscenza non diventa semplicemente non disponibile. Diventa invisibile per chiunque l'istituzione non abbia già raggiunto.</p>
+<p>cipher.learn prende le mosse da questa osservazione. La piattaforma esiste non perché le istituzioni siano maligne, ma perché la loro struttura crea punti ciechi che nessuna singola istituzione può correggere dall'interno.</p>`,
+  l2: 'Il Fondamento Algoritmico',
+  s2: `<p>Il nucleo teorico attinge a una serie di lavori sui sistemi distribuiti e gli schemi a soglia — ricerche motivate non soltanto dall'eleganza, ma dal problema pratico di cosa accade quando i nodi si guastano, quando i partecipanti sono avversari e quando non si può assumere la fiducia.</p>
+<p>Lamport, Shostak e Pease hanno formalizzato questo nel 1982 come il Problema dei Generali Bizantini: come possono i nodi distribuiti raggiungere il consenso quando alcuni partecipanti possono essere attivamente ingannevoli? La risposta richiedeva un algoritmo che non si affida alla fiduciabilità di nessun singolo nodo — il consenso deve emergere dalla struttura del protocollo stesso.</p>
+<p>Lo schema di condivisione del segreto di Shamir del 1979 ha dimostrato che un segreto può essere diviso in n parti tali che qualsiasi k di esse sono sufficienti a ricostruire l'originale, mentre meno di k non rivelano nulla. Questa proprietà di soglia è diventata fondamentale per la fiducia distribuita.</p>
+${DIAGRAM_IDA}
+<p>L'Algoritmo di Dispersione dell'Informazione di Rabin del 1989 ha esteso questo: un messaggio M può essere codificato in n frammenti di dimensione |M|/k ciascuno, tali che qualsiasi k frammenti siano sufficienti a ricostruire M esattamente. Nessun sottoinsieme inferiore a k porta da solo informazioni significative.</p>
+<p>Gli alberi di hash di Merkle (1980) hanno fornito il livello di verifica: una struttura in cui qualsiasi modifica a qualsiasi nodo è rilevabile dalla radice, senza richiedere fiducia in nessun singolo nodo. Questo ha reso la resistenza alla manomissione una proprietà strutturale.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Il filo conduttore di tutti questi lavori è lo stesso: distribuire non perché la centralizzazione sia scomoda, ma perché il fallimento di qualsiasi singolo punto non deve potersi propagare in un fallimento totale. L'algoritmo assorbe il fallimento.</div>`,
+  l3: 'Dall\'Algoritmo al Web3 — La Conseguenza Politica',
+  s3: `<p>Hashcash di Back (2002) ha introdotto la proof-of-work come meccanismo per associare un costo computazionale alle azioni — originariamente come misura anti-spam, ma portando in sé un principio più profondo: che la partecipazione a un sistema condiviso può essere resa costosa senza richiedere un'autorità centrale per applicare tale costo.</p>
+<p>Il whitepaper Bitcoin di Nakamoto del 2008 ha assemblato questi componenti in un sistema funzionante. La motivazione esplicita era la rimozione di terze parti fidate dalle transazioni finanziarie. Il problema enunciato nel paragrafo di apertura è istituzionale: gli intermediari introducono costi, ritardi e punti di guasto singoli. La soluzione è algoritmica: una catena di prove crittografiche che non richiede fiducia in nessun partecipante, solo fiducia nella matematica.</p>
+<p>Il whitepaper Ethereum di Buterin del 2014 ha esteso questo dalla valuta al calcolo: qualsiasi accordo, qualsiasi regola, qualsiasi funzione istituzionale potrebbe in linea di principio essere codificata come programma auto-eseguibile su un registro distribuito. L'implicazione non è che tutte le istituzioni debbano essere sostituite, ma che le funzioni che le istituzioni svolgono possono essere separate dalle istituzioni stesse.</p>
+<div class="pull">Questa è la conseguenza politica degli algoritmi distribuiti. Non ideologia. Non un manifesto. Un'osservazione tecnica che le funzioni delle istituzioni sono separabili dalla loro forma organizzativa — e che la separazione è già stata dimostrata matematicamente.</div>
+<p>cipher.learn è costruito all'intersezione di queste osservazioni. La piattaforma non sostiene nessuna posizione politica o economica particolare. Osserva che lo stesso ragionamento architetturale che ha motivato le reti distribuite, la crittografia a soglia e il consenso decentralizzato motiva anche un approccio diverso a come la conoscenza è detenuta, strutturata e resa accessibile — al di fuori del singolo punto di controllo istituzionale.</p>
+${REFS}`,
+  l4: 'Cos\'È Questo — e Cosa Non È',
+  s4: `<p>Questa pagina è un esempio. Traccia una singola linea di ragionamento — dalle reti distribuite, attraverso la crittografia a soglia, all'emergere del web3 — non perché questa linea sia completa, ma perché è seguibile.</p>
+<p>Lo scopo è specifico: offrire a una generazione che non ha vissuto in prima persona il fallimento dei sistemi centralizzati una certa comprensione del perché il web3 sia stato costruito nel modo in cui è stato costruito. Non cosa sia. Perché fosse necessario, per le persone che lo hanno costruito, date le strutture a cui stavano rispondendo.</p>
+<p>La piattaforma completa collega questi articoli come nodi — le loro citazioni, le loro dipendenze, i loro disaccordi — resi visivamente navigabili in modo che le relazioni tra le idee diventino esplorabili piuttosto che assunte. È un tipo di lettura diverso da quello che fornisce un libro di testo.</p>
+<div class="pull">Nulla di tutto questo è la risposta. È un modo di avvicinarsi alla domanda. Capire perché un sistema è stato progettato nel modo in cui è stato progettato non è la stessa cosa che approvarlo — e non è la stessa cosa che comprenderlo pienamente. Questo è un punto di partenza, non una conclusione.</div>`
+};
+
+// ── ITALIAN (Switzerland / Ticino) ────────────────────────────────────────
+C['it-CH'] = {
+  l1: 'Perché la Distribuzione — Il Fallimento Istituzionale',
+  s1: `<p>La scelta della dispersione crittografica come base tecnica di cipher.learn non è casuale. È una risposta diretta a un problema strutturale: i sistemi centralizzati vengono meno. Vengono meno tecnicamente, e vengono meno socialmente.</p>
+<p>Il rapporto RAND di Paul Baran del 1964 descriveva una rete di comunicazioni concepita per resistere a un attacco nucleare. La sua intuizione non riguardava la ridondanza come caratteristica tecnica — riguardava la ridondanza come unica risposta onesta alla certezza del cedimento. Una rete con un unico centro non rischia soltanto il collasso; lo garantisce. La domanda è solo quando.</p>
+<div class="pull">L'architettura distribuita non è stata inventata per seguire una tendenza. È stata inventata perché i sistemi centralizzati sono strutturalmente fragili — e quella fragilità vale tanto per le infrastrutture di comunicazione quanto per i sistemi finanziari o le istituzioni formative.</div>
+<p>La stessa logica che ha ispirato il progetto di rete di Baran si applica alla conoscenza. Quando l'istituzione che detiene il sapere viene meno — attraverso il controllo degli accessi, attraverso i limiti di risorse, attraverso l'indifferenza culturale — il sapere non diventa semplicemente inaccessibile. Diventa invisibile per chiunque l'istituzione non abbia già raggiunto.</p>
+<p>cipher.learn muove da questa osservazione. La piattaforma esiste non perché le istituzioni siano malintenzionate, ma perché la loro struttura genera zone d'ombra che nessuna singola istituzione può correggere dall'interno.</p>`,
+  l2: 'Il Fondamento Algoritmico',
+  s2: `<p>Il nucleo teorico attinge a una serie di contributi sui sistemi distribuiti e gli schemi a soglia — ricerche motivate non solo dall'eleganza, ma dal problema concreto di cosa accade quando i nodi si guastano, quando i partecipanti sono in conflitto e quando non si può presupporre la fiducia.</p>
+<p>Lamport, Shostak e Pease hanno formalizzato questo nel 1982 con il Problema dei Generali Bizantini: come possono i nodi distribuiti raggiungere un consenso quando alcuni partecipanti possono essere attivamente ingannevoli? La risposta richiedeva un algoritmo che non si fondasse sulla fiduciabilità di nessun singolo nodo — il consenso deve emergere dalla struttura del protocollo stesso.</p>
+<p>Lo schema di condivisione del segreto di Shamir del 1979 ha dimostrato che un segreto può essere suddiviso in n parti tali che qualsiasi k di esse bastano a ricostruire l'originale, mentre meno di k non rivelano nulla. Questa proprietà di soglia è diventata fondante per la fiducia distribuita.</p>
+${DIAGRAM_IDA}
+<p>L'Algoritmo di Dispersione dell'Informazione di Rabin del 1989 ha esteso questo principio: un messaggio M può essere codificato in n frammenti di dimensione |M|/k ciascuno, tali che qualsiasi k frammenti bastino a ricostruire M esattamente. Nessun sottoinsieme inferiore a k porta da solo informazioni significative.</p>
+<p>Gli alberi di hash di Merkle (1980) hanno fornito il livello di verifica: una struttura in cui qualsiasi modifica a qualsiasi nodo è rilevabile dalla radice, senza dover riporre fiducia in nessun singolo nodo.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Il filo conduttore di tutti questi lavori è il medesimo: distribuire non perché la centralizzazione sia scomoda, ma perché il cedimento di qualsiasi punto singolo non deve potersi propagare in un cedimento totale. L'algoritmo assorbe il cedimento.</div>`,
+  l3: 'Dall\'Algoritmo al Web3 — La Conseguenza Politica',
+  s3: `<p>Hashcash di Back (2002) ha introdotto la proof-of-work come meccanismo per associare un costo computazionale alle azioni — in origine come contromisura allo spam, ma portando in sé un principio più profondo: che la partecipazione a un sistema condiviso può essere resa onerosa senza che sia necessaria un'autorità centrale per applicare tale costo.</p>
+<p>Il whitepaper Bitcoin di Nakamoto del 2008 ha riunito questi componenti in un sistema funzionante. La motivazione esplicita era l'eliminazione di terze parti fidate nelle transazioni finanziarie. Il problema enunciato nel primo paragrafo è di natura istituzionale: gli intermediari introducono costi, ritardi e punti di guasto singoli. La soluzione è algoritmica.</p>
+<p>Il whitepaper Ethereum di Buterin del 2014 ha esteso questo principio dalla valuta al calcolo: qualsiasi accordo, qualsiasi regola, qualsiasi funzione istituzionale potrebbe in linea di principio essere codificata come programma auto-eseguibile su un registro distribuito. Le funzioni che le istituzioni svolgono possono essere separate dalle istituzioni stesse.</p>
+<div class="pull">Questa è la conseguenza politica degli algoritmi distribuiti. Non ideologia. Non un manifesto. Un'osservazione tecnica che le funzioni delle istituzioni sono separabili dalla loro forma organizzativa — e che tale separazione è già stata dimostrata matematicamente.</div>
+<p>cipher.learn è costruito all'intersezione di queste osservazioni. La piattaforma non sostiene nessuna posizione politica o economica in particolare. Constata che lo stesso ragionamento architetturale che ha motivato le reti distribuite, la crittografia a soglia e il consenso decentralizzato motiva anche un approccio diverso a come il sapere viene detenuto, strutturato e reso accessibile — al di fuori dell'unico punto di controllo istituzionale.</p>
+${REFS}`,
+  l4: 'Cos\'È Questo — e Cosa Non È',
+  s4: `<p>Questa pagina è un esempio. Traccia una singola linea di ragionamento — dalle reti distribuite, attraverso la crittografia a soglia, fino all'emergere del web3 — non perché questa linea sia completa, ma perché è percorribile.</p>
+<p>Lo scopo è preciso: offrire a una generazione che non ha vissuto direttamente il fallimento dei sistemi centralizzati una comprensione del motivo per cui il web3 è stato costruito nel modo in cui è stato costruito. Non cosa sia. Perché fosse necessario, per chi lo ha costruito, date le strutture a cui stava rispondendo.</p>
+<p>La piattaforma completa collega questi contributi come nodi — le loro citazioni, le loro dipendenze, i loro disaccordi — resi visivamente esplorabili in modo che le relazioni tra le idee diventino navigabili. È un tipo di lettura diverso da quello che offre un manuale.</p>
+<div class="pull">Nulla di tutto questo è la risposta. È un modo di avvicinarsi alla domanda. Capire perché un sistema è stato progettato in un certo modo non equivale ad approvarlo — né a comprenderlo pienamente. Questo è un punto di partenza, non una conclusione.</div>`
+};
+
+// ── PORTUGUESE ────────────────────────────────────────────────────────────
+C['pt'] = {
+  l1: 'Porquê a Distribuição — O Fracasso Institucional',
+  s1: `<p>A escolha da dispersão criptográfica como fundamento técnico do cipher.learn não é arbitrária. É uma resposta directa a um problema estrutural: os sistemas centralizados falham. Falham tecnicamente, e falham socialmente.</p>
+<p>O relatório RAND de Paul Baran de 1964 descrevia uma rede de comunicações concebida para sobreviver a um ataque nuclear. A sua percepção não era sobre a redundância como funcionalidade — era sobre a redundância como a única resposta honesta à certeza do fracasso. Uma rede com um único centro não apenas arrisca o colapso; garante-o. A questão é apenas quando.</p>
+<div class="pull">A arquitectura distribuída não foi inventada por ser uma moda. Foi inventada porque os sistemas centralizados são estruturalmente frágeis — e essa fragilidade aplica-se igualmente às infra-estruturas de comunicação, aos sistemas financeiros e às instituições educativas.</div>
+<p>A mesma lógica que motivou o desenho de rede de Baran aplica-se ao conhecimento. Quando a instituição que detém o conhecimento falha — através do controlo de acesso, das restrições de recursos, da indiferença cultural — o conhecimento não se torna simplesmente indisponível. Torna-se invisível para qualquer pessoa que a instituição ainda não tenha alcançado.</p>
+<p>O cipher.learn parte desta observação. A plataforma existe não porque as instituições sejam maliciosas, mas porque a sua estrutura cria pontos cegos que nenhuma instituição individual pode corrigir por dentro.</p>`,
+  l2: 'O Fundamento Algorítmico',
+  s2: `<p>O núcleo teórico bebe de uma linhagem de trabalhos sobre sistemas distribuídos e esquemas de limiar — investigação motivada não só pela elegância, mas pelo problema prático do que acontece quando os nós falham, quando os participantes são adversariais e quando não se pode pressupor a confiança.</p>
+<p>Lamport, Shostak e Pease formalizaram isto em 1982 como o Problema dos Generais Bizantinos: como podem os nós distribuídos atingir consenso quando alguns participantes podem ser activamente enganosos? A resposta exigiu um algoritmo que não se apoia na fiabilidade de nenhum nó individual — o consenso tem de emergir da estrutura do próprio protocolo.</p>
+<p>O esquema de partilha de segredo de Shamir de 1979 mostrou que um segredo pode ser dividido em n partes de modo que quaisquer k delas sejam suficientes para reconstruir o original, enquanto menos de k não revelam nada. Esta propriedade de limiar tornou-se fundamental para a confiança distribuída.</p>
+${DIAGRAM_IDA}
+<p>O Algoritmo de Dispersão de Informação de Rabin de 1989 alargou isto: uma mensagem M pode ser codificada em n fragmentos, cada um de dimensão |M|/k, de modo que quaisquer k fragmentos sejam suficientes para reconstruir M exactamente. Nenhum subconjunto inferior a k transporta por si só informação significativa.</p>
+<p>As árvores de hash de Merkle (1980) forneceram a camada de verificação: uma estrutura em que qualquer modificação de qualquer nó é detectável a partir da raiz, sem requerer confiança em nenhum nó individual. Isto tornou a resistência à adulteração uma propriedade estrutural.</p>
+${DIAGRAM_ARCH}
+<div class="pull">O fio condutor em todos estes trabalhos é o mesmo: distribuir não porque a centralização seja inconveniente, mas porque o fracasso de qualquer ponto único não pode ser permitido de se propagar em fracasso total. O algoritmo absorve o fracasso.</div>`,
+  l3: 'Do Algoritmo à Web3 — A Consequência Política',
+  s3: `<p>O Hashcash de Back (2002) introduziu a prova de trabalho como mecanismo para associar um custo computacional às acções — originalmente como medida anti-spam, mas carregando em si um princípio mais profundo: que a participação num sistema partilhado pode ser tornada dispendiosa sem requerer uma autoridade central para fazer cumprir esse custo.</p>
+<p>O whitepaper Bitcoin de Nakamoto de 2008 reuniu estes componentes num sistema funcional. A motivação explícita era a eliminação de terceiros de confiança das transacções financeiras. O problema enunciado no parágrafo inicial é institucional: os intermediários introduzem custos, atrasos e pontos únicos de falha. A solução é algorítmica: uma cadeia de provas criptográficas que não requer confiança em nenhum participante, apenas confiança na matemática.</p>
+<p>O whitepaper Ethereum de Buterin de 2014 alargou isto da moeda ao cálculo: qualquer acordo, qualquer regra, qualquer função institucional poderia em princípio ser codificado como programa auto-executável num livro-razão distribuído. A implicação não é que todas as instituições devam ser substituídas, mas que as funções que as instituições desempenham podem ser separadas das próprias instituições.</p>
+<div class="pull">Esta é a consequência política dos algoritmos distribuídos. Não ideologia. Não um manifesto. Uma observação técnica de que as funções das instituições são separáveis da sua forma organizacional — e que a separação já foi demonstrada matematicamente.</div>
+<p>O cipher.learn é construído na intersecção destas observações. A plataforma não defende nenhuma posição política ou económica particular. Observa que o mesmo raciocínio arquitectural que motivou as redes distribuídas, a criptografia de limiar e o consenso descentralizado motiva também uma abordagem diferente de como o conhecimento é detido, estruturado e tornado acessível — fora do ponto único de controlo institucional.</p>
+${REFS}`,
+  l4: 'O Que É Isto — e O Que Não É',
+  s4: `<p>Esta página é um exemplo. Segue uma única linha de raciocínio — de redes distribuídas, através da criptografia de limiar, até ao surgimento da web3 — não porque esta linha seja completa, mas porque é seguível.</p>
+<p>O propósito é específico: oferecer a uma geração que não viveu em primeira mão o fracasso dos sistemas centralizados alguma compreensão de por que razão a web3 foi construída do modo que foi. Não o que é. Por que era necessária, para as pessoas que a construíram, dadas as estruturas a que estavam a responder.</p>
+<p>A plataforma completa liga estes artigos como nós — as suas citações, as suas dependências, os seus desacordos — apresentados visualmente para que as relações entre ideias se tornem navegáveis em vez de presumidas. É um tipo de leitura diferente do que um manual proporciona.</p>
+<div class="pull">Nada disto é a resposta. É uma forma de abordar a questão. Compreender por que razão um sistema foi concebido do modo que foi não é o mesmo que aprová-lo — e não é o mesmo que compreendê-lo plenamente. Este é um ponto de partida, não uma conclusão.</div>`
+};
+
+// ── SPANISH ───────────────────────────────────────────────────────────────
+C['es'] = {
+  l1: 'Por Qué la Distribución — El Fracaso Institucional',
+  s1: `<p>La elección de la dispersión criptográfica como fundamento técnico de cipher.learn no es arbitraria. Es una respuesta directa a un problema estructural: los sistemas centralizados fallan. Fallan técnicamente, y fallan socialmente.</p>
+<p>El informe RAND de Paul Baran de 1964 describía una red de comunicaciones diseñada para sobrevivir a un ataque nuclear. Su percepción no trataba la redundancia como una característica — trataba la redundancia como la única respuesta honesta a la certeza del fallo. Una red con un único centro no solo arriesga el colapso; lo garantiza. La pregunta es solo cuándo.</p>
+<div class="pull">La arquitectura distribuida no se inventó para estar de moda. Se inventó porque los sistemas centralizados son estructuralmente frágiles — y esa fragilidad se aplica por igual a las infraestructuras de comunicación, los sistemas financieros y las instituciones educativas.</div>
+<p>La misma lógica que motivó el diseño de red de Baran se aplica al conocimiento. Cuando la institución que posee el conocimiento falla — a través del control de acceso, de las restricciones de recursos, de la indiferencia cultural — el conocimiento no se vuelve simplemente no disponible. Se vuelve invisible para cualquier persona a la que la institución no haya llegado todavía.</p>
+<p>cipher.learn parte de esta observación. La plataforma existe no porque las instituciones sean maliciosas, sino porque su estructura crea puntos ciegos que ninguna institución individual puede corregir desde dentro.</p>`,
+  l2: 'El Fundamento Algorítmico',
+  s2: `<p>El núcleo teórico bebe de una línea de trabajos sobre sistemas distribuidos y esquemas de umbral — investigación motivada no solo por la elegancia, sino por el problema práctico de qué ocurre cuando los nodos fallan, cuando los participantes son adversariales y cuando no se puede asumir la confianza.</p>
+<p>Lamport, Shostak y Pease formalizaron esto en 1982 como el Problema de los Generales Bizantinos: ¿cómo pueden los nodos distribuidos alcanzar consenso cuando algunos participantes pueden ser activamente engañosos? La respuesta requería un algoritmo que no dependa de que ningún nodo sea fiable — el consenso debe emerger de la estructura del propio protocolo.</p>
+<p>El esquema de compartición de secretos de Shamir de 1979 mostró que un secreto puede dividirse en n partes de modo que cualesquiera k de ellas sean suficientes para reconstruir el original, mientras que menos de k no revelan nada. Esta propiedad de umbral se convirtió en fundamental para la confianza distribuida.</p>
+${DIAGRAM_IDA}
+<p>El Algoritmo de Dispersión de Información de Rabin de 1989 amplió esto: un mensaje M puede codificarse en n fragmentos, cada uno de tamaño |M|/k, de modo que cualesquiera k fragmentos sean suficientes para reconstruir M exactamente. Ningún subconjunto inferior a k lleva por sí solo información significativa.</p>
+<p>Los árboles hash de Merkle (1980) proporcionaron la capa de verificación: una estructura en la que cualquier modificación de cualquier nodo es detectable desde la raíz, sin necesitar confianza en ningún nodo individual. Esto convirtió la resistencia a la manipulación en una propiedad estructural.</p>
+${DIAGRAM_ARCH}
+<div class="pull">El hilo conductor en todos estos trabajos es el mismo: distribuir no porque la centralización sea inconveniente, sino porque el fallo de cualquier punto único no debe poder propagarse en un fallo total. El algoritmo absorbe el fallo.</div>`,
+  l3: 'Del Algoritmo a Web3 — La Consecuencia Política',
+  s3: `<p>Hashcash de Back (2002) introdujo la prueba de trabajo como mecanismo para asociar un coste computacional a las acciones — originalmente como medida anti-spam, pero llevando consigo un principio más profundo: que la participación en un sistema compartido puede hacerse costosa sin requerir una autoridad central que imponga ese coste.</p>
+<p>El whitepaper Bitcoin de Nakamoto de 2008 ensambló estos componentes en un sistema funcional. La motivación explícita era la eliminación de terceros de confianza en las transacciones financieras. El problema enunciado en el párrafo inicial es institucional: los intermediarios introducen costes, retrasos y puntos únicos de fallo. La solución es algorítmica: una cadena de pruebas criptográficas que no requiere confianza en ningún participante, solo en las matemáticas.</p>
+<p>El whitepaper Ethereum de Buterin de 2014 amplió esto de la moneda al cómputo: cualquier acuerdo, cualquier regla, cualquier función institucional podría en principio codificarse como programa auto-ejecutable en un libro contable distribuido. La implicación no es que todas las instituciones deban reemplazarse, sino que las funciones que desempeñan las instituciones pueden separarse de las propias instituciones.</p>
+<div class="pull">Esta es la consecuencia política de los algoritmos distribuidos. No ideología. No un manifiesto. Una observación técnica de que las funciones de las instituciones son separables de su forma organizativa — y que la separación ya ha sido demostrada matemáticamente.</div>
+<p>cipher.learn está construido en la intersección de estas observaciones. La plataforma no defiende ninguna posición política o económica particular. Observa que el mismo razonamiento arquitectónico que motivó las redes distribuidas, la criptografía de umbral y el consenso descentralizado también motiva un enfoque diferente sobre cómo se posee, estructura y hace accesible el conocimiento — fuera del punto único de control institucional.</p>
+${REFS}`,
+  l4: 'Qué Es Esto — y Qué No Es',
+  s4: `<p>Esta página es un ejemplo. Traza una única línea de razonamiento — de redes distribuidas, a través de la criptografía de umbral, hasta la emergencia del web3 — no porque esta línea sea completa, sino porque es seguible.</p>
+<p>El propósito es específico: ofrecer a una generación que no vivió en primera persona el fracaso de los sistemas centralizados cierta comprensión de por qué el web3 se construyó como se construyó. No qué es. Por qué era necesario, para las personas que lo construyeron, dadas las estructuras a las que estaban respondiendo.</p>
+<p>La plataforma completa conecta estos trabajos como nodos — sus citas, sus dependencias, sus desacuerdos — representados visualmente para que las relaciones entre ideas se vuelvan navegables en lugar de asumidas. Es un tipo de lectura diferente al que proporciona un libro de texto.</p>
+<div class="pull">Nada de esto es la respuesta. Es una forma de acercarse a la pregunta. Comprender por qué un sistema fue diseñado como fue no es lo mismo que aprobarlo — y no es lo mismo que comprenderlo plenamente. Este es un punto de partida, no una conclusión.</div>`
+};
+
+// ── ICELANDIC ─────────────────────────────────────────────────────────────
+C['is'] = {
+  l1: 'Hvers Vegna Dreifing — Bilun Stofnana',
+  s1: `<p>Valið á dulmálsdreifingu sem tæknilegu grunni cipher.learn er ekki handahófskennt. Það er bein svar við skipulægu vandamáli: miðstýrð kerfi bila. Þau bila tæknilega, og þau bila félagslega.</p>
+<p>RAND-skýrsla Paul Baran frá 1964 lýsti fjarskiptaneti sem var hannað til að lifa af kjarnorkuárás. Innsæi hans snérist ekki um ofgnótt sem eiginleika — það snérist um ofgnótt sem eina heiðarlega svarið við vissu um bilun. Net með eitt miðpunkt á ekki bara á hættu að hrynja; það tryggir það. Spurningin er aðeins hvenær.</p>
+<div class="pull">Dreifð smíðifræði var ekki fundin upp til að vera tískuleg. Hún var fundin upp vegna þess að miðstýrð kerfi eru skipulagslega brotleg — og sú brotleiki á við jafnt um fjarskiptagrundvöll, fjármálakerfi og menntastofnanir.</div>
+<p>Sama rök sem knúðu netshönnun Baran eiga við um þekkingu. Þegar stofnunin sem geymir þekkingu bilar — með aðgangsstýringu, með fjármagnstak­mörkunum, með menningarlegu hlutleysi — verður þekkingin ekki einfaldlega ófáanleg. Hún verður ósýnileg öllum sem stofnunin hefur ekki þegar náð til.</p>
+<p>cipher.learn hefst á þessari athugun. Kerfið er til ekki vegna þess að stofnanir séu illt­gjörnar, heldur vegna þess að uppbygging þeirra skapar blinda reiti sem engin ein stofnun getur leiðrétt að innan.</p>`,
+  l2: 'Reikniritslegt Grunnverk',
+  s2: `<p>Fræðilegi kjarni dregur úr röð verka um dreifð kerfi og þröskuldskerfi — rannsóknir sem voru ekki aðeins knúnar af fegurð, heldur af hagnýtu vandamáli þess hvað gerist þegar hnútar bila, þegar þátttakendur eru andstæðingalegir og þegar ekki er hægt að gera ráð fyrir trausti.</p>
+<p>Lamport, Shostak og Pease formlægðu þetta árið 1982 sem Vandamál Býsantísku hershöfðingjanna: hvernig geta dreifðir hnútar náð samstöðu þegar sumir þátttakendur geta verið viljandi blekkingalegir? Svarið krafðist reiknirits sem treystir ekki á að neinn einstakur hnútur sé traustur — samstaðan verður að koma fram úr uppbyggingu samskiptareglunnar sjálfrar.</p>
+<p>Leyndarmálshlutdeildarlíkan Shamir frá 1979 sýndi að hægt er að skipta leyndarmáli í n hluta þannig að hvaða k af þeim sem er nægja til að endurbyggja upprunalegt, á meðan færri en k tjá ekkert. Þessi þröskuldseiginleiki — að hlutaupplýsingar eru skipulagslega gagnslausar undir ákveðnum þröskuldi — varð grunnur dreifðs trausts.</p>
+${DIAGRAM_IDA}
+<p>Upplýsingadreifingalgrími Rabin frá 1989 framlengdi þetta: skilaboð M er hægt að kóða í n brot, hvert af stærð |M|/k, þannig að hvaða k brot sem er nægja til að endurbyggja M nákvæmlega. Ekkert hlutmengi minna en k ber eitt og sér þýðingarmiklar upplýsingar.</p>
+<p>Kjötkveikjutré Merkle (1980) veitti staðfestingarlagið: uppbygging þar sem hvaða breyting á hvaða hnút sem er er greinanleg frá rót, án þess að krefjast trausts á einstaka hnút. Þetta gerði fölsunareigin leika að skipulagslegum eiginleika.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Þráðurinn í gegnum öll þessi verk er sá sami: dreifa ekki vegna þess að miðstýring sé óþægileg, heldur vegna þess að bilun hvers sem er einstaks punkts má ekki geta breiðst út í heildarbildun. Reikniritsið gleypir bilunina.</div>`,
+  l3: 'Frá Reikniriti til Web3 — Pólitíska Afleiðingin',
+  s3: `<p>Hashcash Back (2002) kynnti proof-of-work sem búnað til að festa reiknileg gjöld við aðgerðir — upprunalega sem ráðstöfun gegn ruslpósti, en bar í sér dýpra meginreglu: að þátttaka í sameiginlegu kerfi getur verið gerð kostnaðarsöm án þess að krefjast miðlægar yfirvaldar til að framfylgja þeim kostnaði.</p>
+<p>Bitcoin-hvítbók Nakamoto frá 2008 setti þessa hluti saman í virkt kerfi. Skýr hvatning var fjarlæging traustra þriðja aðila úr fjármálaviðskiptum. Vandamálið í opnunargrein er stofnanalegs eðlis: milligöngumenn kynna kostnað, seinkun og einstaka bilunarpunkta. Lausnin er reikniritslegar: keðja dulritunarlegra sönnunargagna sem krefst ekki trausts á neinum þátttakanda, aðeins trausts á stærðfræðinni.</p>
+<p>Ethereum-hvítbók Buterin frá 2014 framlengdi þetta frá gjaldmiðli til útreiknings: hvaða samningur sem er, hvaða regla, hvaða stofnanavirkni gæti í meginatriðum verið kóðuð sem sjálfkeyrandi forrit á dreifðum fjárhag. Í þessu felst ekki að öllum stofnunum eigi að skipta út, heldur að hægt er að aðskilja þær aðgerðir sem stofnanir framkvæma frá stofnununum sjálfum.</p>
+<div class="pull">Þetta er pólitíska afleiðing dreifðra reiknirits. Ekki hugmyndafræði. Ekki yfirlýsing. Tæknilegar athugun að aðgerðir stofnana eru aðskiljanleg frá skipulagslegu formi þeirra — og að aðskilnaðurinn hefur þegar verið sýndur stærðfræðilega.</div>
+<p>cipher.learn er byggt á mótum þessara athuganir. Kerfið tekur ekki afstöðu til sérstakrar pólitískar eða efnahagslegrar stöðu. Það tekur eftir því að sama skipulagslega rök og knúðu dreifð net, þröskuldsdulmál og dreifðan samstöðu knýja einnig aðra nálgun á því hvernig þekking er geymd, skipulögð og gerð aðgengileg — utan einstaks punkts stofnanalegrar aðgangsstýringar.</p>
+${REFS}`,
+  l4: 'Hvað Þetta Er — og Hvað Það Er Ekki',
+  s4: `<p>Þessi síða er eitt dæmi. Hún fylgir einni röklínu — frá dreifðum netum, í gegnum þröskuldsdulmál, til uppriss web3 — ekki vegna þess að þessi lína sé fullkomin, heldur vegna þess að hana er hægt að fylgja.</p>
+<p>Tilgangurinn er sérstakur: að bjóða kynslóð sem upplifði ekki bilun miðstýrðra kerfa í eigin persónu einhverja skilning á því hvers vegna web3 var byggt eins og það var. Ekki hvað það er. Hvers vegna það var nauðsynlegt, fyrir þá sem byggðu það, miðað við þær mannvirki sem þeir voru að svara.</p>
+<p>Fullt kerfið tengir þessar greinar sem hnúta — tilvísanir þeirra, ósjálfstæði þeirra, ósamkomulög þeirra — sýnd sjón­rænt þannig að samband hugmynda verður leiðsögulegt frekar en gert ráð fyrir. Þetta er önnur tegund lestrar en það sem kennslubók veitir.</p>
+<div class="pull">Ekkert af þessu er svarið. Þetta er leið til að nálgast spurninguna. Að skilja hvers vegna kerfi var hannað eins og það var er ekki það sama og að samþykkja það — og það er ekki það sama og að skilja það að fullu. Þetta er upphafspunktur, ekki niðurstaða.</div>`
+};
+
+// ── CATALAN ───────────────────────────────────────────────────────────────
+C['ca'] = {
+  l1: 'Per Què la Distribució — El Fracàs Institucional',
+  s1: `<p>L'elecció de la dispersió criptogràfica com a fonament tècnic de cipher.learn no és arbitrària. És una resposta directa a un problema estructural: els sistemes centralitzats fallen. Fallen tècnicament, i fallen socialment.</p>
+<p>L'informe RAND de Paul Baran de 1964 descrivia una xarxa de comunicacions dissenyada per sobreviure a un atac nuclear. La seva percepció no tractava la redundància com una característica — tractava la redundància com l'única resposta honesta a la certesa del fracàs. Una xarxa amb un únic centre no tan sols arrisca l'ensorrament; el garanteix. La pregunta és només quan.</p>
+<div class="pull">L'arquitectura distribuïda no es va inventar per estar de moda. Es va inventar perquè els sistemes centralitzats són estructuralment fràgils — i aquesta fragilitat s'aplica igualment a les infraestructures de comunicació, als sistemes financers i a les institucions educatives.</div>
+<p>La mateixa lògica que va motivar el disseny de xarxa de Baran s'aplica al coneixement. Quan la institució que posseeix el coneixement falla — a través del control d'accés, de les restriccions de recursos, de la indiferència cultural — el coneixement no es torna simplement no disponible. Es torna invisible per a qualsevol persona a qui la institució no hagi arribat encara.</p>
+<p>cipher.learn parteix d'aquesta observació. La plataforma existeix no perquè les institucions siguin malicioses, sinó perquè la seva estructura crea punts cecs que cap institució individual pot corregir des de dins.</p>`,
+  l2: 'El Fonament Algorísmic',
+  s2: `<p>El nucli teòric beu d'una línia de treballs sobre sistemes distribuïts i esquemes de llindar — recerca motivada no tan sols per l'elegància, sinó pel problema pràctic del que passa quan els nodes fallen, quan els participants són adversarials i quan no es pot assumir la confiança.</p>
+<p>Lamport, Shostak i Pease van formalitzar això el 1982 com el Problema dels Generals Bizantins: com poden els nodes distribuïts assolir consens quan alguns participants poden ser activament enganyosos? La resposta requeria un algoritme que no depengui de la fiabilitat de cap node individual — el consens ha d'emergir de l'estructura del propi protocol.</p>
+<p>L'esquema de compartició de secrets de Shamir de 1979 va mostrar que un secret es pot dividir en n parts de manera que qualsevol k d'elles siguin suficients per reconstruir l'original, mentre que menys de k no revelen res. Aquesta propietat de llindar va esdevenir fonamental per a la confiança distribuïda.</p>
+${DIAGRAM_IDA}
+<p>L'Algoritme de Dispersió d'Informació de Rabin de 1989 va ampliar això: un missatge M es pot codificar en n fragments de mida |M|/k cadascun, de manera que qualsevol k fragments siguin suficients per reconstruir M exactament. Cap subconjunt inferior a k transporta per si sol informació significativa.</p>
+<p>Els arbres hash de Merkle (1980) van proporcionar la capa de verificació: una estructura en la qual qualsevol modificació de qualsevol node és detectable des de l'arrel, sense requerir confiança en cap node individual.</p>
+${DIAGRAM_ARCH}
+<div class="pull">El fil conductor en tots aquests treballs és el mateix: distribuir no perquè la centralització sigui inconvenient, sinó perquè el fallada de qualsevol punt únic no ha de poder-se propagar en una fallada total. L'algoritme absorbeix la fallada.</div>`,
+  l3: 'De l\'Algoritme al Web3 — La Conseqüència Política',
+  s3: `<p>El Hashcash de Back (2002) va introduir la prova de treball com a mecanisme per associar un cost computacional a les accions — originalment com a mesura anti-spam, però portant en si un principi més profund: que la participació en un sistema compartit pot fer-se costosa sense requerir una autoritat central que imposi aquest cost.</p>
+<p>El whitepaper Bitcoin de Nakamoto de 2008 va assemblar aquests components en un sistema funcional. La motivació explícita era l'eliminació de tercers de confiança de les transaccions financeres. El problema enunciat al paràgraf inicial és institucional: els intermediaris introdueixen costos, retards i punts únics de fallada. La solució és algorísmica.</p>
+<p>El whitepaper Ethereum de Buterin de 2014 va ampliar això de la moneda al càlcul: qualsevol acord, qualsevol regla, qualsevol funció institucional podria en principi codificar-se com a programa auto-executable en un registre distribuït. Les funcions que realitzen les institucions es poden separar de les institucions mateixes.</p>
+<div class="pull">Aquesta és la conseqüència política dels algoritmes distribuïts. No ideologia. No un manifest. Una observació tècnica que les funcions de les institucions són separables de la seva forma organitzativa — i que la separació ja ha estat demostrada matemàticament.</div>
+<p>cipher.learn està construït a la intersecció d'aquestes observacions. La plataforma no defensa cap posició política o econòmica particular. Observa que el mateix raonament arquitectònic que va motivar les xarxes distribuïdes, la criptografia de llindar i el consens descentralitzat també motiva un enfocament diferent sobre com es posseeix, estructura i fa accessible el coneixement — fora del punt únic de control institucional.</p>
+${REFS}`,
+  l4: 'Què És Això — i Què No És',
+  s4: `<p>Aquesta pàgina és un exemple. Traça una única línia de raonament — de xarxes distribuïdes, a través de la criptografia de llindar, fins a l'emergència del web3 — no perquè aquesta línia sigui completa, sinó perquè és seguible.</p>
+<p>El propòsit és específic: oferir a una generació que no va viure en primera persona el fracàs dels sistemes centralitzats alguna comprensió de per què el web3 va ser construït com va ser. No el que és. Per què era necessari, per a les persones que el van construir, donades les estructures a les quals responien.</p>
+<p>La plataforma completa connecta aquests treballs com a nodes — les seves cites, les seves dependències, els seus desacords — representats visualment perquè les relacions entre idees esdevinguin navegables en lloc d'assumides. És un tipus de lectura diferent al que proporciona un llibre de text.</p>
+<div class="pull">Res d'això és la resposta. És una manera d'acostar-se a la pregunta. Entendre per què un sistema va ser dissenyat com va ser no és el mateix que aprovar-lo — i no és el mateix que comprendre'l plenament. Aquest és un punt de partida, no una conclusió.</div>`
+};
+
+// ── BASQUE ────────────────────────────────────────────────────────────────
+C['eu'] = {
+  l1: 'Zergatik Banaketa — Erakundeen Hutsegitea',
+  s1: `<p>cipher.learn-en oinarri tekniko gisa banaketa kriptografikoa aukeratzea ez da arbitrarioa. Arazo estrukturalari erantzun zuzena da: sistema zentralizatuak huts egiten dute. Teknikoki huts egiten dute, eta sozialki huts egiten dute.</p>
+<p>Paul Baran-en 1964ko RAND txostenak eraso nuklear bat bizirik iraun ahal izateko diseinatutako komunikazio-sare bat deskribatzen zuen. Bere ikuspegia ez zen soberatasunaz funtzionalitate gisa — soberatasunaz hutsegitearen ziurtasunari erantzun bakarra eta zintzoa bezala zen. Zentro bakarra duen sare batek ez du kolapsoa arriskatu bakarrik; bermatzen du. Galdera noiz den soilik da.</p>
+<div class="pull">Arkitektura banandua ez zen moda izateko asmatu. Sistema zentralizatuak estrukturalki hauskorrak direlako asmatu zen — eta hauskorrtasun hori komunikazio-azpiegiturari, finantza-sistemei eta hezkuntza-erakundeei berdin aplikatzen zaie.</div>
+<p>Baran-en sare-diseinua sustatu zuen logika berberak ezagutzari aplikatzen zaio. Ezagutza duen erakundeak huts egiten duenean — sarbide-kontrolaren bidez, baliabide-murrizketen bidez, kulturako axolagabekeriaren bidez — ezagutza ez da soilik eskuraezin bihurtzen. Erakundeak oraindik iritsi ez dion edonorentzat ikusezin bihurtzen da.</p>
+<p>cipher.learn behaketa honetatik abiatzen da. Plataforma ez da erakundeak gaiztoak direlako existitzen, baizik eta haien egiturak erakundeek barnean zuzendu ezin dituzten puntu itsuak sortzen dituelako.</p>`,
+  l2: 'Oinarri Algoritmikoa',
+  s2: `<p>Oinarri teorikoa sistema banatuei eta atalase-eskemei buruzko lan sorta batetik edaten du — elegantziaz soilik ez, baizik eta nodoak huts egiten dutenean, parte-hartzaileak etsaiak direnean eta fidagarritasuna suposatu ezin denean zer gertatzen den arazo praktikoaz eraginda ikerketa.</p>
+<p>Lamport, Shostak eta Pease-k 1982an Jeneral Bizantinoen Problema gisa formalizatu zuten hau: nola lor dezakete nodo banatuek adostasuna parte-hartzaile batzuk aktiboki engainagarriak direnean? Erantzunak nodo bakarrean fidagarria izanaz fidatzen ez den algoritmo bat behar zuen — adostasuna protokolaren egitura bertatik sortu behar da.</p>
+<p>Shamir-en 1979ko sekretu-partekatzeko eskemak erakutsi zuen sekretu bat n zatitan bana daitekeela, edozein k horietatik jatorrizkoa berreraiki ahal izateko nahikoak diren moduan, bitartean k baino gutxiago ez da ezer agertzen. Atalase-propietate honek banakako fidagarritasunerako oinarrizkoa bihurtu zen.</p>
+${DIAGRAM_IDA}
+<p>Rabin-en 1989ko Informazio Banaketa Algoritmoak hau zabaldu zuen: M mezu bat n zatitan koda daiteke, bakoitza |M|/k tamainakoa, edozein k zati M zehaztasunez berreraikitzeko nahikoak diren moduan. k baino txikiagoa den azpimultzo batek bakarrik ez du informazio esanguratsurik darama.</p>
+<p>Merkle-ren hash zuhaitzek (1980) egiaztapen-geruza eman zuten: nodo edozeinetan egindako edozein aldaketa errotik antzemangarria den egitura bat, nodo indibidualetan fidagarritasuna behar gabe. Horrek manipulazio-erresistentzia propietate estruktural bihurtu zuen.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Lan guzti hauetan zeharreko haria berdina da: ez banatu zentralizazioa deserosoa delako, baizik eta puntu bakarraren hutsegiteak ezin duelako guztizko hutsegitean hedatu. Algoritmoak hutsegitea xurgatzen du.</div>`,
+  l3: 'Algoritmotik Web3ra — Ondorio Politikoa',
+  s3: `<p>Back-en Hashcash-ek (2002) lanaren frogapena ekintzetara kostu konputazionala lotzeko mekanismo gisa aurkeztu zuen — jatorriz spam aurkako neurri gisa, baina printzipio sakonago bat barnean zeramanez: sistema partekatu batean parte-hartzea kostu handikoa egin daiteke agintari zentral bat kostu hori betearazteko behar gabe.</p>
+<p>Nakamoto-ren 2008ko Bitcoin liburu zuriak osagai hauek sistema funtzional batean bildu zituen. Esplizituko motibazioa finantza-transakzioetan fidagarria den hirugarrenen ezabatzea zen. Lehenengo paragrafoan aipatutako arazoa instituzionala da: tartekoen kostuak, atzerapenak eta hutsegite-puntu bakarrak sartzen dituzte. Irtenbidea algoritmikoa da: parte-hartzaileen konfiantza behar ez duen kate kriptografiko bat, soilik matematikaren konfiantza behar duen bat.</p>
+<p>Buterin-en 2014ko Ethereum liburu zuriak hori monetatik kalkulura zabaldu zuen: edozein akordio, edozein arau, edozein funtzio instituzional printzipioz liburu banatu batean auto-exekutatzen den programa gisa koda liteke. Inplikazioa ez da erakunde guztiak ordezkatu behar direla, baizik eta erakundeek betetzen dituzten funtzioak erakundeetatik bertatik bana daitezkeela.</p>
+<div class="pull">Hau da algoritmo banatuek duten ondorio politikoa. Ez ideologia. Ez manifestu bat. Erakundeen funtzioak haien antolaketa-formetik bana daitezkeela dioen behaketa teknikoa — eta banaketa jada matematikoki frogatu dela.</div>
+<p>cipher.learn behaketa hauen gurutzagunean eraikita dago. Plataformak ez du edozein posizio politiko edo ekonomiko zehatz defendatzen. Sare banatuak, atalase-kriptografia eta adostasun deszentralizatua sustatu zuen arrazonamendu arkitektoniko berak ezagutza nola eduki, egituratu eta eskuragarri egin ikertzeko ikuspegi ezberdin bat ere sustatzen duela behatzen du — erakunde-sarbidearen kontrolaren puntu bakarraren kanpoan.</p>
+${REFS}`,
+  l4: 'Zer Den Hau — eta Zer Ez Den',
+  s4: `<p>Orrialde hau adibide bat da. Arrazonamendu lerro bakarra jarraitzen du — sare banatuetatik, atalase-kriptografiaren bidez, web3-ren sorreraraino — lerro hau osatua delako ez, jarraitu daitekeelako baizik.</p>
+<p>Helburua zehatza da: sistema zentralizatuen hutsegitea lehen eskutik bizi ez zuen belaunaldiari zergatik web3 eraiki zen ulertzeko aukera eskaintzea. Ez zer den. Zergatik beharrezkoa zen, eraiki zutenentzat, erantzuten ari ziren egiturak kontuan hartuz.</p>
+<p>Plataforma osoak lan hauek nodo gisa lotzen ditu — haien aipuak, dependentziak, desadostasunak — bisualki irudikatuta, ideen arteko harremanak suposatu beharrean nabigatzen den moduan. Testu-liburu batek eskaintzen duena baino bestelako irakurketa mota da.</p>
+<div class="pull">Hau ez da erantzuna. Galderara hurbiltzeko modu bat da. Sistema zergatik diseinatu zen ulertzea ez da bera onestea — eta ez da guztiz ulertzea. Hau abiapuntua da, ez ondorioa.</div>`
+};
+
+// ── GALICIAN ──────────────────────────────────────────────────────────────
+C['gl'] = {
+  l1: 'Por Que a Distribución — O Fracaso Institucional',
+  s1: `<p>A elección da dispersión criptográfica como fundamento técnico de cipher.learn non é arbitraria. É unha resposta directa a un problema estrutural: os sistemas centralizados fallan. Fallan tecnicamente, e fallan socialmente.</p>
+<p>O informe RAND de Paul Baran de 1964 describía unha rede de comunicacións deseñada para sobrevivir a un ataque nuclear. A súa percepción non trataba a redundancia como unha característica — trataba a redundancia como a única resposta honesta á certeza do fracaso. Unha rede cun único centro non só arrisca o colapso; garánteo. A pregunta é só cando.</p>
+<div class="pull">A arquitectura distribuída non se inventou para estar de moda. Inventouse porque os sistemas centralizados son estruturalmente fráxiles — e esa fraxilidade aplícase igualmente ás infraestruturas de comunicación, aos sistemas financeiros e ás institucións educativas.</div>
+<p>A mesma lóxica que motivou o deseño de rede de Baran aplícase ao coñecemento. Cando a institución que posúe o coñecemento falla — a través do control de acceso, das restricións de recursos, da indiferenza cultural — o coñecemento non se volve simplemente non dispoñible. Vólvese invisible para calquera persoa á que a institución non chegase aínda.</p>
+<p>cipher.learn parte desta observación. A plataforma existe non porque as institucións sexan maliciosas, senón porque a súa estrutura crea puntos cegos que ningunha institución individual pode corrixir desde dentro.</p>`,
+  l2: 'O Fundamento Algorítmico',
+  s2: `<p>O núcleo teórico bebe dunha liña de traballos sobre sistemas distribuídos e esquemas de limiar — investigación motivada non só pola elegancia, senón polo problema práctico do que acontece cando os nodos fallan, cando os participantes son adversariais e cando non se pode asumir a confianza.</p>
+<p>Lamport, Shostak e Pease formalizaron isto en 1982 como o Problema dos Xerais Bizantinos: como poden os nodos distribuídos alcanzar consenso cando algúns participantes poden ser activamente enganosos? A resposta requiría un algoritmo que non dependa da fiabilidade de ningún nodo individual — o consenso debe emerxer da estrutura do propio protocolo.</p>
+<p>O esquema de compartición de segredos de Shamir de 1979 mostrou que un segredo pode dividirse en n partes de xeito que calquera k delas sexan suficientes para reconstruír o orixinal, mentres que menos de k non revelan nada. Esta propiedade de limiar converteuse en fundamental para a confianza distribuída.</p>
+${DIAGRAM_IDA}
+<p>O Algoritmo de Dispersión de Información de Rabin de 1989 ampliou isto: unha mensaxe M pode codificarse en n fragmentos de tamaño |M|/k cada un, de xeito que calquera k fragmentos sexan suficientes para reconstruír M exactamente. Ningún subconxunto inferior a k transporta por si só información significativa.</p>
+<p>As árbores hash de Merkle (1980) proporcionaron a capa de verificación: unha estrutura na que calquera modificación de calquera nodo é detectable desde a raíz, sen requirir confianza en ningún nodo individual.</p>
+${DIAGRAM_ARCH}
+<div class="pull">O fío condutor en todos estes traballos é o mesmo: distribuír non porque a centralización sexa inconveniente, senón porque o fallo de calquera punto único non debe poder propagarse en fallo total. O algoritmo absorbe o fallo.</div>`,
+  l3: 'Do Algoritmo á Web3 — A Consecuencia Política',
+  s3: `<p>O Hashcash de Back (2002) introduciu a proba de traballo como mecanismo para asociar un custo computacional ás accións — orixinalmente como medida anti-spam, pero levando en si un principio máis profundo: que a participación nun sistema compartido pode facerse custosa sen requirir unha autoridade central que impoña ese custo.</p>
+<p>O whitepaper Bitcoin de Nakamoto de 2008 ensamblouu estes compoñentes nun sistema funcional. A motivación explícita era a eliminación de terceiros de confianza das transaccións financeiras. O problema enunciado no parágrafo inicial é institucional: os intermediarios introducen custos, atrasos e puntos únicos de fallo. A solución é algorítmica.</p>
+<p>O whitepaper Ethereum de Buterin de 2014 ampliou isto da moeda ao cálculo: calquera acordo, calquera regra, calquera función institucional podería en principio codificarse como programa auto-executable nun rexistro distribuído. As funcións que as institucións realizan poden separarse das propias institucións.</p>
+<div class="pull">Esta é a consecuencia política dos algoritmos distribuídos. Non ideoloxía. Non un manifesto. Unha observación técnica de que as funcións das institucións son separables da súa forma organizativa — e que a separación xa foi demostrada matematicamente.</div>
+<p>cipher.learn está construído na intersección destas observacións. A plataforma non defende ningunha posición política ou económica particular. Observa que o mesmo razoamento arquitectónico que motivou as redes distribuídas, a criptografía de limiar e o consenso descentralizado tamén motiva un enfoque diferente sobre como se posúe, estrutura e fai accesible o coñecemento — fóra do punto único de control institucional.</p>
+${REFS}`,
+  l4: 'Que É Isto — e Que Non É',
+  s4: `<p>Esta páxina é un exemplo. Traza unha única liña de razoamento — de redes distribuídas, a través da criptografía de limiar, ata a emerxencia do web3 — non porque esta liña sexa completa, senón porque é seguible.</p>
+<p>O propósito é específico: ofrecer a unha xeración que non viviu en primeira persoa o fracaso dos sistemas centralizados algún entendemento de por que o web3 foi construído como foi. Non o que é. Por que era necesario, para as persoas que o construíron, dadas as estruturas ás que respondían.</p>
+<p>A plataforma completa conecta estes traballos como nodos — as súas citas, as súas dependencias, os seus desacordos — representados visualmente para que as relacións entre ideas se vaian navegables en lugar de asumidas. É un tipo de lectura diferente ao que proporciona un libro de texto.</p>
+<div class="pull">Nada disto é a resposta. É unha forma de achegarse á pregunta. Entender por que un sistema foi deseñado como foi non é o mesmo que aprobalo — e non é o mesmo que comprendelo plenamente. Este é un punto de partida, non unha conclusión.</div>`
+};
+
+// ── OCCITAN ───────────────────────────────────────────────────────────────
+C['oc'] = {
+  l1: 'Perqué la Distribucion — L\'Escàs Institucionala',
+  s1: `<p>La caucha de la dispersión criptografica coma fondament tecnic de cipher.learn es pas arbitrària. Es una responsa directa a un problèma estructural : los sistèmas centralizats fracàsson. Fracàsson tecnicament, e fracàsson socialament.</p>
+<p>Lo rapòrt RAND de Paul Baran de 1964 descriviá una ret de comunicacions concebuda per sobreviscut a una ataca nucleara. Son intuicion portava pas sus la redundança coma foncion — portava sus la redundança coma unica responsa onèsta a la certituda de l'escàs. Una ret amb un centre unic ris pas solament l'esfondrament ; lo garantis. La question es solament quora.</p>
+<div class="pull">L'arquitectura distribuïda foguèt pas inventada per èsser a la mòda. Foguèt inventada perqué los sistèmas centralizats son estructuralament frágils — e aquesta fragilitat s'aplica egalament a las infraestructuras de comunicacion, als sistèmas financièrs e a las institucions educativas.</div>
+<p>La mèma logica que motivèt lo disseny de ret de Baran s'aplica al conoisement. Quand l'institucion que tèn lo conoisement fracàssa — per lo contraròtle d'accès, per las contrasenhas de ressorsas, per la indeferéncia culturala — lo conoisement devient pas simplament indisponible. Devient invisible per qualquissèt que l'institucion a pas ja atenhut.</p>
+<p>cipher.learn comença d'aquesta observacion. La plataforma existís pas perqué las institucions sián maliciosas, mas perqué lor estructura crèa ponchs ciecs que deguna institucion pòt corregir de dins.</p>`,
+  l2: 'Lo Fondament Algorismic',
+  s2: `<p>Lo nòdi teoretic se alimenta d'una linha de trabalhs sus los sistèmas distribuïts e los esquèmas de lindal — recerca motivada pas solament per l'elegança, mas pel problèma practic de çò que se pàssa quand los nodes fracàsson, quand los participants son adversarials, e quand la confiança pòt pas èsser supposada.</p>
+<p>Lamport, Shostak e Pease formalizèron aquò en 1982 coma lo Problèma dels Generals Bizantins : cossí los nodes distribuïts pòdon aténher un consens quand d'unes participants pòdon èsser activament enganhadors ? La responsa requeriá un algoritme que se repausa pas sus la confianciabilitat d'un node unic — lo consens deu emergir de la estructura del protocol el meteis.</p>
+<p>L'esquèma de partiment de secret de Shamir de 1979 mostrèt qu'un secret pòt èsser dividit en n parts tals que qualsiá k d'elas sián sufisantas per reconstruïr l'original, mentre que mens de k revelan ren. Aquesta proprietat de lindal devinguèt fondamentala per la confiança distribuïda.</p>
+${DIAGRAM_IDA}
+<p>L'Algoritme de Dispersión d'Informacion de Rabin de 1989 estendèt aquò : un messatge M pòt èsser encodificat en n fragments de talha |M|/k cadun, tals que qualsiá k fragments sián sufisants per reconstruïr M exactament. Degun sosconjunt mens grand que k pòrta per el meteis d'informacion significativa.</p>
+<p>Los arbres de hach de Merkle (1980) provesiguèron la capa de verificacion : una estructura dins que qualsiá modificacion de qualsiá node es detectable dempuèi la raïtz, sens requèrir confiança en degun node individual.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Lo filèt conductor a travèrs totes aquestos trabalhs es lo meteis : distribuïr pas perqué la centralizacion es incomòda, mas perqué l'escàs de qualsiá ponch unic deu pas poder se propagar en un escàs total. L'algoritme absorb l'escàs.</div>`,
+  l3: 'De l\'Algoritme al Web3 — La Consequéncia Politica',
+  s3: `<p>Lo Hashcash de Back (2002) introdusiguèt la prova de trabalh coma mecanisme per ligar un còst computacional a las accions — originalment coma mesura contra-spam, mas portant en el un principi mai profond : que la participacion a un sistèma comparit pòt èsser renduda costosa sens requèrir una autoritat centrala per far respectar aquèl còst.</p>
+<p>Lo libre blanc Bitcoin de Nakamoto de 2008 assemblèt aquestos components en un sistèma operacional. La motivacion explicita èra la supression de tèrças partidas de confiança dins las transaccions financieras. Lo problèma enonciat al primièr paragraf es institucional : los intermediaris introdusson costes, retards e ponchs unic d'escàs. La solucion es algoritmica.</p>
+<p>Lo libre blanc Ethereum de Buterin de 2014 estendèt aquò de la moneda al calcul : qualsiá acòrd, qualsiá règla, qualsiá foncion institucionala poiriá en principi èsser encodificada coma programa auto-executant sus un registre distribuït. Las foncions que las institucions realizan pòdon èsser separadas de las institucions el meteis.</p>
+<div class="pull">Aquò es la consequéncia politica dels algoritmes distribuïts. Pas ideologia. Pas un manifest. Una observacion tecnica que las foncions de las institucions son separablas de lor forma organizacionala — e que la separacion a ja estat demostrada matematicament.</div>
+<p>cipher.learn es construït a l'interseccion d'aquestas observacions. La plataforma defènd pas deguna posicion politica o economica particulara. Observa que lo meteis rasonament arquitectonic que motivèt las rets distribuïdas, la criptografia de lindal e lo consens descentralizat motiva tanben una aprochi diferenta de cossí lo conoisement es tingut, estructurat e rendut accessible — fòra del ponch unic de contraròtle institucional.</p>
+${REFS}`,
+  l4: 'Çò qu\'Es — e Çò que N\'Es Pas',
+  s4: `<p>Aquesta pagina es un exemple. Tràça una linha unica de rasonament — de rets distribuïdas, a travèrs la criptografia de lindal, fins a l'emergéncia del web3 — pas perqué aquesta linha sega complèta, mas perqué es seguible.</p>
+<p>Lo propòs es especific : ofrir a una generacion qu'a pas viscut de primièra man l'escàs dels sistèmas centralizats qualques compreneson per qué lo web3 foguèt construït cossí que foguèt. Pas çò qu'es. Per qué èra necessari, per las personas que lo construïguèron, donadas las estructuras a que respondián.</p>
+<p>La plataforma complèta liga aquestos articles coma nodes — lors citacions, lors dependéncias, lors desacòrds — renduts visualament navigables en tal que las relacions entre las idèas devengan navigablas e pas solament supposadas. Es una autre mena de legeire que çò que proveïsh un libre escolar.</p>
+<div class="pull">Ren d'aquò es la responsa. Es una manièra d'aprochar la question. Comprene per qué un sistèma foguèt concebut cossí qu'es pas lo meteis coma l'aprovar — e es pas lo meteis coma lo comprene plenament. Aquò es un ponch de partença, pas una conclusion.</div>`
+};
+
+// ── BRETON ────────────────────────────────────────────────────────────────
+C['br'] = {
+  l1: 'Perak ar Rannañ — Fazi ar Strolladoù',
+  s1: `<p>Dibab ar c'hreizañ kriptografek evel diazez teknikel cipher.learn n'eo ket dre zegouezh. Unan eo a respondom diouzhtu d'ur gudenn struktural : ar reizhiadoù kreizenniñ a vez o fazi. O fazi a reont eus ar poent teknikel, hag o fazi a reont eus ar poent sokial.</p>
+<p>Evezhiadenn RAND Paul Baran eus 1964 a deskrivfe ur rouedad kelaouiñ savet evit mirout beaø war-sav erbedenadur nuklear. E rezon ne oa ket diwar-benn ar c'hemennadurioù evel arverenn — e oa diwar-benn ar c'hemennadurioù evel an hini-nemetañ respont onest d'ar sioulder eus ar fazi. Ur rouedad gant ur c'hreizenn nemetañ ne risc'het ket ar c'hreskiñ nemetañ ; e warantiñ a ra anezhañ. An hol-kezeg eo nemetañ pegoulz.</p>
+<div class="pull">N'eo ket bet savet an architektur rannet evit bezañ er vod. Bet savet eo bet peogwir eo ar reizhiadoù kreizenniñ frazh eus ar stummadur — hag ar frazhtoni-se a implij kement ha da infrastrukturadoù kelaouiñ, reizhiadoù moneiz ha strolladoù deskadurezh.</div>
+<p>An hevelep reolennoù hag a oa bet o boskañ stummadur rouedad Baran a implij d'ar goulenn. Pa vez o fazi ar strollad a zo o taliañ d'ar goulenn — dre reolañ an donezon, dre bisigoù armerzhoù, dre neoñv kulturel — n'eo ket ar goulenn nemetañ o tont da vezañ dizolokapl. E teu da vezañ diwelus evit pep hini ne devoe ket ar strollad c'hoazh degaset.</p>
+<p>cipher.learn a grog diwar ar mererezh-mañ. Ar bladenn a zo da vezañ ket peogwir eo ar strolladoù fal-spered, met peogwir eo o stummadur o krouiñ poentoù dall n'hall ket ur strollad nemetañ keriañ eus an diabarzh.</p>`,
+  l2: 'Diazez Algoritmek',
+  s2: `<p>Ar c'hrec'h teoretek a glask ur rummad labourioù diwar-benn reizhiadoù rannet ha c'hoarioù traoñ-meur — klask hep bezañ nemetañ berzhet gant kaerder, met gant ar gudenn practis eus ar pezh a c'hoarvez pa vez o fazi ar nodeoù, pa vez adversariel ar pesketaerien, ha pa c'heller ket kemer an hider evel digeriñ.</p>
+<p>Lamport, Shostak ha Pease a formalizeris se e 1982 evel Kudenn ar Jenerealed Bisantin : penaos e c'hellont ar nodeoù rannet treiñ war un accord pa vez ur nebeud pesketaerien o c'hellin bezañ torriñ en un doare aktif ? Ar respont a glaskas un algoritm na reont ket fiant e nodenn nemetañ ar re wirion — ar c'honsent a zleer dont war-maez eus stummadur ar c'houarnerezh e-unan.</p>
+<p>Reizhiad rannañ-muiañ Shamir eus 1979 a zisklêrias e c'haller rannañ ur muiañ en n lodenn evit ma vezefe any k anezhe a-walc'h evit adsevel ar gwreiddiol, pa ne zisklêrjo ket lez k ebet. Ar perzh traoñ-meur-mañ a teu da vezañ diazez evit an hider rannet.</p>
+${DIAGRAM_IDA}
+<p>Algoritm Rannañ Titouroù Rabin eus 1989 a astenn se : ur gemennadenn M a c'haller enkodañ en n lodenn, pep unan eus ment |M|/k, evit ma vezefe any k lodenn a-walc'h evit adsevel M ent eeun. N'eus ket a isspeurenn a zo bihanoc'h eget k o kargañ titour talvoudek e-unan.</p>
+<p>Gwezenn hash Merkle (1980) a roaz ar gwiskad gwiriegezh : ur stummadur ma vez c'hwezegadur pep kemmadur eus pep nodenn anavezet diwar-benn ar gwrizienn, hep klask hider e nodenn nemetañ. Se a reas a rezistañs ouzh fallsfazañ ur perzh struktural.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Ar werennoù e-keñver an holl labourioù-mañ zo hevelep : rannañ ket peogwir eo ar c'hreizenniñ diaes, met peogwir na zleer ket kavout fazi ur poentenn nemetañ da c'hoarvezout en ur fazi hollañ. Ar algoritm a glasug ar fazi.</div>`,
+  l3: 'Diouz Algoritm betek Web3 — Disoc\'h Politikel',
+  s3: `<p>Hashcash Back (2002) a ginnig proof-of-work evel ur mekanizm evit liammañ ur c'houstadur kalkul ouzh an oberennoù — e deroù evel ul luc'hed ouzh ar spam, met o kargañ enno ur rezonenn afelloc'h : e c'haller ober ar gant-bezan er reizhiad rannet e kostus hep klask un aoterded kreiz evit impujout ar c'hostadur-se.</p>
+<p>Levrig gwenn Bitcoin Nakamoto eus 2008 a assamblas ar patromoù-mañ en ur reizhiad o werc'hel. Ar c'hemenn stank oa tilerc'hañ tredantourien a fiant eus trafelloù moneiz. Ar gudenn ennañ el lodenn gentañ eo ur goulenn strolladel : ar muiañ-mouezh a gas kostadurioù, dale ha poent-fazi nemetañ. Ar soluzon eo algoritmek.</p>
+<p>Levrig gwenn Ethereum Buterin eus 2014 a astenn se diwar-benn ar moneiz betek ar c'halkul : forzh pe c'hord, forzh pe reol, forzh pe arc'hwel strolladel a c'hallfe eus ar reizh bezañ enkodañ evel ur programm emren war ur ledger rannet. Ar reolennoù hag a ra ar strolladoù a c'hall bezañ dispartiet eus ar strolladoù o-unan.</p>
+<div class="pull">Setu disoc'h politikel ar c'hinnigadoù algoritmek rannet. N'eo ket ur verzh. N'eo ket ur manifesto. Ur mererezh teknikel eo ma vez dispartiadus arc'hwelioù ar strolladoù diouzh o stumm organizañ — hag eo bet diskouezet ar rannañ-se eus ar matematikerezh.</div>
+<p>cipher.learn zo savet e kreskenn ar mererezhoù-mañ. Ar bladenn n'eo ket o taliañ evit forzh pe mevell politikel pe ekonomikel. Eo o mererezh emañ an hevelep rezonenn architekturel hag a oa berzhet ar rouedadoù rannet, ar c'hriptografiezh traoñ-meur hag ar c'honsent dizentralizet o boskañ ivez ur moyen disheñvel evit penaos taliañ, steuziañ ha ober ar goulenn anavezapl — e-diavaez ar poentenn nemetañ a reolañ strolladel.</p>
+${REFS}`,
+  l4: 'Petra eo — ha Petra n\'eo Ket',
+  s4: `<p>Ar bajenn-mañ zo un skouer. Heuliañ a ra ur reiñ rezonenn nemetañ — diwar-benn ar rouedadoù rannet, dre ar c'hriptografiezh traoñ-meur, betek sevel web3 — ket peogwir eo ar reiñ-se leun, met peogwir eo heuliañ anavezapl anezhañ.</p>
+<p>An eil dreistforzh eo : kinnig d'ur c'henlabourer n'eo ket bet bremaïket fazi ar reizhiadoù kreizenniñ ur kompren a-benn perak eo bet savet web3 evel-se. N'eo ket petra eo. Perak eo bet ret, evit ar re hag a sav anezhañ, roet ar stummadurioù da vont en-raog dezhe.</p>
+<p>Ar bladenn leun a liamm ar pennadoù-mañ evel nodeoù — o sintezoù, o displijoù, o diskordoù — diskouezet eus ar weledvezh evit ma teufe ar c'hellennoù etre an ideennoù da vezañ merdeet. Seurt lenn disheñvel eo eget ar pezh a ro ur levr-skol.</p>
+<div class="pull">N'eo ket tra ebet eus se ar respont. Ur maner eo da vont en-dro d'ar goulenn. Kompren perak eo bet savet ur reizhiad evel-se n'eo ket an hevelep tra gantañ o merezhañ — ha n'eo ket an hevelep tra gantañ da gaout a-grenn. Ur poent-grog eo, ket ur c'hontañ.</div>`
+};
+
+// ── CORSICAN ──────────────────────────────────────────────────────────────
+C['co'] = {
+  l1: 'Perchè a Distribuzione — U Fallimentu Istituzionale',
+  s1: `<p>A scelta di a dispersione criptografica cum'è fundamendu tecnicu di cipher.learn ùn hè micca arbitraria. Hè una risposta diretta à un prublemu strutturale : i sistemi centralizzati fallenu. Fallenu tecnicamente, è fallenu sucialmente.</p>
+<p>U rapportu RAND di Paul Baran di u 1964 descriveva una reta di comunicazione cuncepita per sopravvivere à un attaccu nucleare. A so percezione ùn rigardava micca a ridundanza cum'è una funziunalità — rigardava a ridundanza cum'è a sola risposta onesta à a certezza di u fallimentu. Una reta cun un solu centru ùn risca micca solu u crolli ; lu garantisci. A quistione hè solu quandu.</p>
+<div class="pull">L'architettura distribuita ùn hè micca stata inventata per esse à a moda. Hè stata inventata perchè i sistemi centralizzati sò strutturalmente fragili — è quella fragilità si applica egualmente à l'infrastrutture di cumunicazione, à i sistemi finanziari è à l'istituzioni educative.</div>
+<p>A stessa logica chì ha motivatu u disignu di reta di Baran si applica à a cunuscenza. Quandu l'istituzione chì pussede a cunuscenza falla — per u cuntrolu d'accessu, per i vinculi di risorse, per l'indifferenza culturale — a cunuscenza ùn diventa micca solu indisponibile. Diventa invisibile per qualsiasi persona chì l'istituzione ùn hà micca ancu raghjuntu.</p>
+<p>cipher.learn parte da questa osservazione. A piattaforma esiste micca perchè l'istituzioni sò maligni, ma perchè a so struttura crea punti ciechi chì niuna istituzione individuale pò curregge da l'internu.</p>`,
+  l2: 'U Fundamendu Algoritmicu',
+  s2: `<p>U nucleu teoricu attinge à una linea di travagli supra i sistemi distribuiti è i schemi di soglia — ricerca motivata micca solu da l'eleganza, ma da u prublemu pratico di ciò chì accade quandu i nodi fallenu, quandu i participanti sò avversariali è quandu micca si pò assumere a fiducia.</p>
+<p>Lamport, Shostak è Pease anu formalizzatu questu in u 1982 cum'è u Prublemu di i Generali Bizantini : cumu ponu i nodi distribuiti raghjunghje u consensu quandu alcuni participanti ponu esse attivamente ingannatori ? A risposta richiedeva un algoritmu chì ùn si basa micca supra a fiducibilità di niun nodo singulu — u consensu deve emergere da a struttura di u prutucollu stessu.</p>
+<p>U schema di cundiusione di secretu di Shamir di u 1979 ha dimustratu chì un secretu pò esse divisu in n parti tali chì qualsiasi k di esse sò sufficienti per ricustruisce l'originale, mentre chì menu di k ùn rivelanu nunda. Questa proprietà di soglia hè diventata fundamentale per a fiducia distribuita.</p>
+${DIAGRAM_IDA}
+<p>L'Algoritmu di Dispersione di l'Infurmazione di Rabin di u 1989 hà stintutu questu : un messaghju M pò esse codificatu in n frammentu di dimensione |M|/k ognunu, tali chì qualsiasi k frammenti sò sufficienti per ricustruisce M esattamente. Niun sottoinsiemu infiriore à k porta per sè stessu infurmazione significativa.</p>
+<p>L'arburi di hash di Merkle (1980) anu furnitu u livellu di verificazione : una struttura in cui qualsiasi mudifica di qualsiasi nodo hè detettabile da a radiche, senza richiedere fiducia in niun nodo individuale.</p>
+${DIAGRAM_ARCH}
+<div class="pull">U filu conduttore in tutti questi travagli hè u listessu : distribuisce micca perchè a centralizzazione hè incomoda, ma perchè u fallimentu di qualsiasi puntu unicu ùn deve micca pudè propagarsi in un fallimentu totale. L'algoritmu assorbe u fallimentu.</div>`,
+  l3: 'Da l\'Algoritmu à u Web3 — A Cunseguenza Pulitica',
+  s3: `<p>U Hashcash di Back (2002) hà introduttu a prova di travagliu cum'è un mecanismu per associà un costu computazionale à l'azzioni — originariamente cum'è misura anti-spam, ma portendu in sè un principiu più prufundu : chì a participazione à un sistema cundiusu pò esse resa costosa senza richiedere un'autorità centrale chì impone quellu costu.</p>
+<p>U whitepaper Bitcoin di Nakamoto di u 2008 hà assemblatu questi cumponents in un sistema funziunale. A motivazione esplicita era l'eliminazione di terze parti fidate da e transazzioni finanziarie. U prublemu enunciatu in u primu paragrafu hè istituzionale : l'intermediari introducenu costi, ritardi è punti di fallimentu unicu. A suluzione hè algoritmica.</p>
+<p>U whitepaper Ethereum di Buterin di u 2014 hà stintutu questu da a muneta à u calculu : qualsiasi accordu, qualsiasi regula, qualsiasi funzione istituzionale puriria in principiu esse codificata cum'è prugramma auto-eseguibile supra un libru mastru distribuitu. E funzioni chì l'istituzioni realizanu ponu esse separate da l'istituzioni stesse.</p>
+<div class="pull">Questa hè a cunseguenza pulitica di l'algoritmi distribuiti. Micca ideologia. Micca un manifestu. Un'osservazione tecnica chì e funzioni di l'istituzioni sò separabili da a so forma organizzativa — è chì a separazione hè stata dighjà dimustrata matematicamente.</div>
+<p>cipher.learn hè custruitu à l'incrociu di queste osservazioni. A piattaforma ùn difende micca niuna posizione pulitica o economica particulare. Osserva chì u listessu ragiunamentu architettonico chì hà motivatu e reti distribuite, a crittografia di soglia è u consensu decentralizzatu motiva ancu un approcciu differente di cumu a cunuscenza hè tenuta, strutturata è resa accessibile — fori di u puntu unicu di cuntrolu istituzionale.</p>
+${REFS}`,
+  l4: 'Ciò chì Hè — è Ciò chì Ùn Hè',
+  s4: `<p>Questa pagina hè un esempiu. Traccia una sola linea di ragiunamentu — da le reti distribuite, attraversu a crittografia di soglia, finu à l'emergenza di u web3 — micca perchè questa linea sii completa, ma perchè hè seguibile.</p>
+<p>L'ubiettivu hè specificu : offre à una generazione chì ùn hà micca vissuto in prima persona u fallimentu di i sistemi centralizzati qualchì cumprensionu di perchè u web3 hè statu custruitu com'è hè statu. Micca ciò chì hè. Perchè era necessariu, per e persone chì l'anu custruitu, dati i strutture à quali stavanu rispunendu.</p>
+<p>A piattaforma cumpreta cunnesci questi articuli cum'è nodi — e so citazioni, e so dipendenze, i so disaccordi — presentati visualmente per chì e relazioni trà l'idee divintenu navigabili invece d'esse supposte. Hè un tipu di lettura diversu da quellu chì furnisce un libru di testu.</p>
+<div class="pull">Nunda di tutto questu hè a risposta. Hè un modu d'avvicinarsi à a quistione. Capisce perchè un sistema hè statu cuncepitu com'è hè statu micca hè listessu chì approvà lu — è micca hè listessu chì cumprendellu pienamente. Questu hè un puntu di partenza, micca una cunclusione.</div>`
+};
+
+// ── ROMANSH (Rumantsch Grischun) ──────────────────────────────────────────
+C['rm'] = {
+  l1: 'Perquai la Distribuziun — Il Fracass Instituziunal',
+  s1: `<p>La chaschun da la dispersiun criptografica sco fundament tecnic da cipher.learn n'è betg arbitraria. Ella è ina resposta directa ad in problem structural : sistems centralisads fallan. Els fallan tecnicamain, ed els fallan socialamain.</p>
+<p>Il rapport RAND da Paul Baran da l'onn 1964 descriva ina rait da comunicaziun concepida per surviver ad in attatg nuclear. Sia intuiziun n'era betg davart la redundanza sco ina funcziunalitad — ella era davart la redundanza sco l'única resposta onesta a la segirezza da il fracass. Ina rait cun in senter singul n'enrisca betg mo il crollament ; ella al garantescha. La dumonda è mo cur.</p>
+<div class="pull">L'architettura distribuida n'è betg vegnida inventada per esser a la moda. Ella è vegnida inventada perquai che sistems centralisads èn structuralmaing fragils — e quella fragilità vala eglmain per infrastructuras da comunicaziun, sistems financiers ed instituziuns educativas.</div>
+<p>La medema logica che ha motivà il design da rait da Baran vala per la cgnuschientscha. Sche l'instituziun che tegna la cgnuschientscha falla — tras il controlla d'access, tras las restricziuns da ressursas, tras l'indifferenza culturala — la cgnuschientscha na daventan betg simplamain indisponibla. Ella daventa invisibla per mintgin che l'instituziun n'ha betg anc rimnà.</p>
+<p>cipher.learn entscheiva da questa observaziun. La plattafurma exista betg perquai che las instituziuns sajan maliciostas, mabain perquai che lur structura crea punchs borgns che nagin'instituziun singula po currigir da l'intern.</p>`,
+  l2: 'Il Fundament Algoritmics',
+  s2: `<p>Il nizi teoretic attira dad ina lingia da lavuors davart sistems distribuids e squits da valur — perscrutaziun motivada betg mo da l'eleganza, mabain dal problem practic da quai che succeida cur che noeds fallan, cur che participants èn adversarials, e cur che la confidenza na po betg vegnir supposta.</p>
+<p>Lamport, Shostak e Pease han formalisà quai il 1982 sco il Problem dals Generals Byzantins : co pon noeds distribuids arrivar ad in consens cur che tschertas participants pon esser activamaing deceptivs ? La resposta dueva in algoritmus che na sa basa betg sin la fidabladad da nagin noed singul — il consens sto emerger da la structura dal protocol sez.</p>
+<p>Il squit da cumparter secrets da Shamir da l'onn 1979 ha mussà che in secret po vegnir dividì en n parts, che mintga k dad els èn sufficients per reconstruir l'original, durant che main che k na reveleschan nagut. Questa proprietad da valur è daventada fundamentala per la confidenza distribuida.</p>
+${DIAGRAM_IDA}
+<p>L'Algoritmus da Dispersiun d'Infurmaziun da Rabin da l'onn 1989 ha extendì quai : in messadi M po vegnir encodà en n fragments, mintga d'ells da grondezza |M|/k, che mintga k fragments èn sufficients per reconstruir M exactamain. Nagin sutensem pli pitschen che k porta per sez infurmazions signifitgantas.</p>
+<p>Ils arbels da hash da Merkle (1980) han furnì il stgalim da verificaziun : ina structura en che mintga modificaziun da mintga noed è detectable da la radicla, senza giubilar confidenza en nagin noed individual.</p>
+${DIAGRAM_ARCH}
+<div class="pull">Il fil conductor tras tut quests lavuors è il medem : distribuir betg perquai che la centralisaziun è incomodanta, mabain perquai che il fracass da mintga punct singul na sto betg poter propagar s'en in fracass total. L'algoritmus absorbescha il fracass.</div>`,
+  l3: 'Dals Algoritmus al Web3 — La Consequenza Politica',
+  s3: `<p>Il Hashcash da Back (2002) ha introducì la prova da lavur sco mecanissem per ligar in custs computaziunal als acziuns — originalmain sco mesira cunter spam, mabain portond en sez in princip pli profund : che la participaziun en in sistem cumpartì po vegnir rendida custusa senza giubilar in'autoritad centrala per far valair quels custs.</p>
+<p>Il whitepaper Bitcoin da Nakamoto da l'onn 2008 ha assemblà quests components en in sistem functziunant. La motivaziun explicita era l'eliminaziun da terzas persunas da confidenza da transacziuns financialas. Il problem enunzià en il emprim paragraff è instituziuonal : mediants introduceschan custs, retards e punchs singuls da fracass. La soluziun è algoritmica.</p>
+<p>Il whitepaper Ethereum da Buterin da l'onn 2014 ha extendì quai da la moneta al calcul : mintga accord, mintga regla, mintga funcziun instituziuonala pudess en princip vegnir encodà sco program auto-executant sin in registra distribuì. Las funcziunalitads che las instituziuns realiseschan pon vegnir separadas da las instituziuns sezzas.</p>
+<div class="pull">Quai è la consequenza politica dals algoritmus distribuids. Betg ideologia. Betg in manifest. Ina observaziun tecnica che las funcziunalitads da las instituziuns èn separablas da lur furma organisatorica — e che la separaziun è gia vegnida dimustrada matematicamain.</div>
+<p>cipher.learn è construì a l'incruschada da questas observaziuns. La plattafurma defenda nagina posiziun politica u economica particulara. Ella observa che la medema raschunament arquitectural che ha motivà las raits distribuidas, la criptografia da valur ed il consens decentralisà motiva er in'approcha differenta da co la cgnuschientscha è tegnida, structurada e rendida accessibla — ordaifer il punct singul da controlla instituziuonal.</p>
+${REFS}`,
+  l4: 'Quai che Quai È — e Quai che n\'È Betg',
+  s4: `<p>Questa pagina è in exempel. Ella tracescha ina singula lingia da raschunament — da raits distribuidas, tras la criptografia da valur, fin a l'emergenza dal web3 — betg perquai che questa lingia saja cumpletta, mabain perquai ch'ella è segibla.</p>
+<p>Il intent è specific : offrir ad ina generaziun che n'ha betg experimentà directamain il fracass dals sistems centralisads ina chapida perquai il web3 è vegnì construì uschia. Betg quai che quai è. Perquai ch'era necessari — per las persunas che l'han construì, dadas las structuras a las qualas els respondivan.</p>
+<p>La plattafurma cumpletta connecta quests artitgels sco noeds — lur citaziuns, lur dependenzas, lur discordanzas — rendids visivamain navigabels, uschia che las relaziuns tranter las ideas daventan navigablas enstagl d'esser supposta. Quai è in tip da lectura differenta da quai che in maun da scola furnischa.</p>
+<div class="pull">Nagut da quai è la resposta. Quai è ina maniera da s'avischinar a la dumonda. Chapir perquai in sistem è vegnì concepì uschia n'è betg il medem sco al approvar — e n'è betg il medem sco al chapir cumplettamain. Quai è in punct da partenza, betg ina conclusiun.</div>`
+};
+
+function cifraGetLang() { try { return localStorage.getItem('cipher_lang') || 'en-GB'; } catch(e) { return 'en-GB'; } }
+function cifraSetLang(id) { try { localStorage.setItem('cipher_lang', id); } catch(e) {} }
+
+let curLang = cifraGetLang();
+
+function buildLangBar() {
+  const bar = document.getElementById('langbar');
+  bar.innerHTML = '';
+  CIFRA_LANGS.forEach(l => {
+    const btn = document.createElement('button');
+    btn.className = 'lang-btn' + (l.id === curLang ? ' active' : '');
+    btn.textContent = l.label + ' ' + l.id.toUpperCase();
+    btn.title = l.name;
+    btn.addEventListener('click', () => {
+      curLang = l.id;
+      cifraSetLang(l.id);
+      render();
+    });
+    bar.appendChild(btn);
+  });
+}
+
+function render() {
+  const t = C[curLang] || C['en-GB'];
+  document.getElementById('content').innerHTML = `
+    <div class="section">
+      <div class="section-label">${t.l1}</div>
+      <div class="body-text">${t.s1}</div>
+    </div>
+    <hr class="divider">
+    <div class="section">
+      <div class="section-label">${t.l2}</div>
+      <div class="body-text">${t.s2}</div>
+    </div>
+    <hr class="divider">
+    <div class="section">
+      <div class="section-label">${t.l3}</div>
+      <div class="body-text">${t.s3}</div>
+    </div>
+    <hr class="divider">
+    <div class="section">
+      <div class="section-label">${t.l4}</div>
+      <div class="body-text">${t.s4}</div>
+    </div>
+  `;
+  buildLangBar();
+  document.getElementById('footerLang').textContent = curLang;
+  document.title = `cipher.learn — concept (${curLang})`;
+}
+
+buildLangBar();
+render();
+</script>
+</body>
+</html>
